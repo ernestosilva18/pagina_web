@@ -3,5 +3,3 @@ streamlit_option_menu
 pandas
 openpyxl
 folium
-random
-streamlit.components.v1
