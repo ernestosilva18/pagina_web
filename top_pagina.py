@@ -79,7 +79,7 @@ st.markdown(
     <style>
     /* Cambiar el fondo de la aplicación */
     [data-testid="stAppViewContainer"] {
-        background-image: url("https://wallpaperaccess.com/full/828106.jpg");
+        background-image: url("https://wallpapercave.com/wp/wp2148179.jpg");
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
@@ -93,13 +93,26 @@ st.markdown(
     
     /* Estilo para los títulos */
     h1 {
-        color: #8D0000 !important;
+        color: #DD2A2A !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     
     /* Estilo para los subtítulos */
     h2, h3 {
-        color: #8D0000 !important;
+        color: #5DADE2 !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Estilo para otros textos */
+    h4 {
+        color: #CEFF4A !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Estilo para otros textos */
+    h5 {
+        color: #EE88AF !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     
     /* Estilo para el texto general */
@@ -119,7 +132,7 @@ with st.sidebar:
     # Crear un menú con opciones de navegación
     pagina_seleccionada = option_menu(
         menu_title="🎵 MENÚ PRINCIPAL",  # Título del menú
-        options=['🏠 Inicio', '💿 Discografía', '🗺️ Mapa', '📊 Estadísticas'],  # Opciones disponibles
+        options=['🏠 Inicio', '💿 Discografía', '📖 Lore', '🗺️ Mapa', '¿Qué tanto conoces a TOP? |-/', '📊 Estadísticas'],  # Opciones disponibles
         icons=['house', 'music-note-list', 'map', 'graph-up'],  # Iconos de cada opción
         menu_icon="mic",  # Ícono principal del menú
         default_index=0  # La opción seleccionada por defecto (0 = Inicio)
@@ -133,14 +146,14 @@ with st.sidebar:
 if pagina_seleccionada == '🏠 Inicio':
     # Mostrar título principal centrado y con color rojo
     st.markdown(
-        "<h1 style='text-align: center; color: #8D0000;'>🎵 TWENTY ONE PILOTS 🎵</h1>",
+        "<h1 style='text-align: center; color: #8D0000;'>TWENTY ONE PILOTS</h1>",
         unsafe_allow_html=True
     )
     
     # Agregar el logo oficial de la banda centrado
     st.markdown(
         "<div style='display: flex; justify-content: center; margin: 20px 0;'>"
-        "<img src='https://band-logos.com/wp-content/uploads/2025/07/Twenty-One-Pilots-Band-Logo-3.png' "
+        "<img src='https://logos-world.net/wp-content/uploads/2024/12/21-Pilots-Logo-2011.png' "
         "alt='Twenty One Pilots Logo' style='width: 280px; border-radius: 8px;'>"
         "</div>",
         unsafe_allow_html=True
@@ -161,9 +174,7 @@ if pagina_seleccionada == '🏠 Inicio':
         - **Tyler Joseph**: Vocalista y productor
         - **Josh Dun**: Baterista
         
-        Con su estilo único que mezcla hip-hop, rock y electrónica, Twenty One Pilots se ha convertido en una de las 
-        bandas más influyentes de la música contemporánea. Sus letras profundas y su energía en vivo los han llevado 
-        a ganar múltiples premios y reconocimientos a nivel mundial.
+        La banda se ha consolidado como un fenómeno global gracias a su sonido ecléctico que fusiona elementos de rock alternativo, pop, hip-hop, electrónica y reggae, además de destacar por la profunda carga emocional e introspectiva de sus letras, las cuales abordan temas como la salud mental, la fe y la inseguridad. Con álbumes conceptuales multiplatino como Blurryface (2015) —que hizo historia al lograr que todas sus canciones recibieran al menos la certificación de oro— y una estética visual y narrativa inconfundible, el grupo ha roto récords en la industria musical y se ha ganado una base de fanáticos devotos gracias a sus enérgicos e impredecibles conciertos en vivo.
         """
         
         st.markdown(presentacion)  # Mostrar el texto
@@ -180,11 +191,14 @@ if pagina_seleccionada == '🏠 Inicio':
         - American Music Awards
         
         **Álbumes Principales:**
+        - Twenty One Pilots (2009)
+        - Regional at Best (2011) (actualmente inexistente)
         - Vessel (2013)
         - Blurryface (2015)
         - Trench (2018)
         - Scaled and Icy (2021)
         - Clancy (2024)
+        - Breach (2025)
         
         **Género Musical:**
         Alternative Hip-Hop / Electropop / Rock
@@ -227,15 +241,13 @@ if pagina_seleccionada == '🏠 Inicio':
 elif pagina_seleccionada == '💿 Discografía':
     # Mostrar título
     st.markdown(
-        "<h1 style='text-align: center; color: #8D0000;'>💿 DISCOGRAFÍA DE TWENTY ONE PILOTS</h1>",
+        "<h1 style='text-align: center; color: #8D0000;'>|-/ DISCOGRAFÍA DE TWENTY ONE PILOTS</h1>",
         unsafe_allow_html=True
     )
     
     # Pequeña introducción
     st.markdown(
-        "<p style='text-align: center; color: #000000; font-size: 16px;'>"
-        "Explora todos los álbumes y canciones de Twenty One Pilots"
-        "</p>",
+        "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Aquí puedes explorar todos los álbumes y canciones de Twenty One Pilots, ver detalles de cada canción y conocer el mensaje detrás de cada una de ellas.</p>",
         unsafe_allow_html=True
     )
     
@@ -439,7 +451,179 @@ elif pagina_seleccionada == '💿 Discografía':
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================================================================
-# PÁGINA 3: MAPA DE VIDEOCLIPS (Ubicaciones de grabación)
+# PÁGINA 2: DISCOGRAFÍA (Álbumes y canciones)
+# ============================================================================
+
+elif pagina_seleccionada == '📖 Lore':
+    # Mostrar título
+    pass
+    st.markdown(
+        "<h1 style='text-align: center; color: #8D0000;'>GUÍA SOBRE PERSONAJES Y CIUDADES DE LA HISTORIA QUE NECESITAN SABER PARA ENTENDER</h1>",
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Esto al principio puede ser un poco confuso y no es necesario aprendérselo ahora, pero cada vez que se pierdan con respecto a algún personaje, vuelvan a acá para aclarar quién es. Cabe aclarar que estas descripciones se van modificando y completando a medida que salen más detalles sobre los personajes.</p>",
+        unsafe_allow_html=True
+    )
+    col1, col2 = st.columns(2)
+    
+    # ========== COLUMNA 1: INFORMACIÓN GENERAL ==========
+    with col1:
+        st.markdown("<h2 style='color: #8D0000;'>PERSONAJES</h2>", unsafe_allow_html=True)
+        
+        # Texto de presentación con imágenes a la derecha
+        personajes = [
+            {
+                "nombre": "Blurryface",
+                "descripcion": "es el líder de los 9 obispos, pero a la vez es uno de ellos, es como el obispo Nico decide llamarse a él mismo. Es el que mayor poder tiene. Apareció en el 2015 representando los miedos e inseguridades de Tyler. Se presenta en las canciones con una voz grave y el color que lo distingue es el rojo.",
+                "imagen": "https://i.pinimg.com/736x/30/fe/26/30fe262ff9c2e7874aabc66642d74ffd.jpg"
+            },
+            {
+                "nombre": "Nico and the niners (obispos)",
+                "descripcion": "los obispos controlan dema y predican la palabra del vialismo. Su autoridad proviene de dos cosas: un poder milagroso y una religión secuestrada, uno alimenta al otro formando un ciclo. El color que los representa es el rojo y no pueden ver el color amarillo.",
+                "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaTHNcTCUusNTeVuTf3WBNJfNfrfQe2f2S_Q&s"
+            },
+            {
+                "nombre": "Nico",
+                "descripcion": "Nico es uno de los 9 obispos que hay en dema, pero a la vez tiene control sobre los otros 9 obispos, lo que significa que si bien él es una persona con poder que está por arriba de los 9 obispos al mismo tiempo es parte de ellos. También es blurryface, pero esto lo explico a detalle más adelante.",
+                "imagen": "https://static.wikia.nocookie.net/twenty-one-pilots/images/c/c4/Nico-Blurryface.png/revision/latest/scale-to-width-down/1200?cb=20250305220952"
+            },
+            {
+                "nombre": "Tyler",
+                "descripcion": "simboliza un personaje que está todo el tiempo entrando y saliendo de Dema, el cual representa la lucha sobre querer salir de esa ciudad.",
+                "imagen": "https://upload.wikimedia.org/wikipedia/commons/6/62/Tyler_Joseph_on_Clancy_Tour_%28cropped%29.jpg"
+            },
+            {
+                "nombre": "Josh",
+                "descripcion": "es el lider de los banditos. Intenta sacar a Tyler y otras personas de dema.",
+                "imagen": "https://i.pinimg.com/736x/bd/2f/f8/bd2ff80d4bba3db7a59249000b4bdb62.jpg"
+            },
+            {
+                "nombre": "Banditos",
+                "descripcion": "viven en Trench y son la rebelion. Ellos quieren terminar con el sistema que imponen los obispos en dema e intentan sacar a la gente que está atrapada en ese lugar. Se visten de amarillo, ya que como los obispos no pueden ver ese color es perfecto para usarlo como camuflaje y pasar por desapercibidos cuando están cerca de ellos.",
+                "imagen": "https://i.pinimg.com/736x/02/be/80/02be804349d17a8da32f53dea65d5f7a.jpg"
+            },
+            {
+                "nombre": "Clancy",
+                "descripcion": "es el personaje de Tyler. Ha escrito cartas contando como se vive en Trench, en Dema y relatando su propia experiencia en esos lugares.",
+                "imagen": "https://i.pinimg.com/736x/c5/e9/45/c5e94582234b2f2e80db7353020009af.jpg"
+            },
+            {
+                "nombre": "Trash",
+                "descripcion": "es el dragón azul brillante de la era Scaled and Icy que encarna el poder de la imaginación indomable. Aunque inicialmente es utilizado por los obispos como una fachada de propaganda feliz y corporativa para ocultar el control mental sobre Clancy, este 'dragón de basura' (asociado en realidad a los rebeldes) termina rompiendo las reglas y destruyendo las barreras del sistema.",
+                "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROnSDLBA4Ga1ag_ndK1Q0cl8EZWEFRltFgBw&s"
+            },
+            {
+                "nombre": "Ned",
+                "descripcion": "es una criatura tímida y tierna introducida en la era Trench que simboliza la creatividad pura, la inocencia y el alma infantil del artista. Representa esa parte vulnerable de la mente que los obispos de Dema intentan robar y marchitar, siendo alimentada por el entusiasmo y el deseo de escapar de la opresión.",
+                "imagen": "https://static.wikia.nocookie.net/twenty-one-pilots/images/0/0b/Ned.jpg/revision/latest?cb=20200614014742"
+            }
+            
+        ]
+
+        for personaje in personajes:
+            texto_col, imagen_col = st.columns([3, 1])
+            with texto_col:
+                st.markdown(
+                    f"- <span style='color: #8D0000; font-weight: bold;'>{personaje['nombre']}:</span> <span style='color: #000000;'>{personaje['descripcion']}</span>",
+                    unsafe_allow_html=True
+                )
+            with imagen_col:
+                st.image(personaje['imagen'], width=90)
+    
+    # ========== COLUMNA 2: DATOS INTERESANTES ==========
+    with col2:
+        st.markdown("<h2 style='color: #8D0000;'>LUGARES Y RELIGIÓN</h2>", unsafe_allow_html=True)
+        
+        # Información adicional
+        lugares = [
+            {
+                "nombre": "VIALISMO",
+                "descripcion": "es la religión de Dema predicada por los obispos. Esta religión está llena de ideales tóxicos y autodestructivos que te llenan de miedos e inseguridades que perjudican tu vida llevando a los habitantes de Dema a la autodestrucción, ya que según ellos esta es el único camino hacia el paraíso. Esta autodestrucción también les permite que las personas se conviertan en vasijas disponibles para que ellos las utilicen.",
+                "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr7eo0Dkcq6e6DIiH-TzfLk4w4Fh9FENgvzg&s"
+            },
+            {
+                "nombre": "Dema",
+                "descripcion": "es la ciudad donde viven los obispos y la gente controlada por su sistema. Tiene forma de torre de silencio, los cuales eran edificios funerarios utilizados en India en donde ponían los cadáveres humanos separándoles por hombres, mujeres y niños; en el universo de top esta se separa en lápidas, edificios donde están encerradas las personas y las 9 torres correspondientes a cada uno de los 9 obispos.",
+                "imagen": "https://static.wikia.nocookie.net/twenty-one-pilots/images/0/0a/DEMA_Map.webp/revision/latest/scale-to-width-down/250?cb=20240206114415"
+            },
+            {
+                "nombre": "Trench",
+                "descripcion": "es el continente donde transcurre la historia. Dentro de este se encuentra la ciudad de Dema, un puerto, la isla Voldsøy (isla de la violencia) y entre las montañas alejadas esta el campamento de los banditos, donde estos viven y es un lugar seguro.",
+                "imagen": "https://pbs.twimg.com/media/FN_0bDXVEAATkD3.jpg"
+            },
+            
+        ]
+
+        for lugar in lugares:
+            texto_col, imagen_col = st.columns([3, 1])
+            with texto_col:
+                st.markdown(
+                    f"- <span style='color: #8D0000; font-weight: bold;'>{lugar['nombre']}:</span> <span style='color: #000000;'>{lugar['descripcion']}</span>",
+                    unsafe_allow_html=True
+                )
+            with imagen_col:
+                st.image(lugar['imagen'], width=90)
+
+
+#En esta sección, se contará ya la historia a través de un botón interactivo con el comando st.button
+
+        if 'mostrar_historia' not in st.session_state:
+            st.session_state.mostrar_historia = False
+
+        if st.button('Conoce la Historia detrás de las canciones', key='btn_ir_historia'):
+            st.session_state.mostrar_historia = not st.session_state.mostrar_historia
+
+        if st.session_state.mostrar_historia:
+            st.markdown('---')
+            st.markdown("<h2 style='color: #8D0000;'>Historia</h2>", unsafe_allow_html=True)
+
+            historia_secciones = [
+                {
+                    'titulo': 'Capítulo 1: Blurryface (La Manifestación de la Inseguridad)',
+                    'texto': '**La historia comienza con la personificación de las inseguridades, miedos y dudas más oscuros de Tyler Joseph bajo el nombre de Blurryface. Este ente representa la voz de la autocrítica extrema y el deseo de rendirse. Por ello, canciones como Stressed Out y Fairly Local exponen la lucha diaria entre la persona que uno quiere ser y la presión asfixiante de las expectativas externas e internas. Blurryface se apodera de la mente, haciendo que el protagonista cuestione su valía, su arte y su fe. A lo largo de esta etapa, se establece la tensión entre dejarse llevar por el nihilismo que impone esta voz oscura o aferrarse a las creencias y a la música como una vía de escape, aunque el camino sea doloroso y confuso.**',
+                    'imagen': 'https://static.wikia.nocookie.net/twenty-one-pilots/images/5/58/Blurryface.jpg/revision/latest?cb=20160105182338'
+                },
+                {
+                    'titulo': 'Capítulo 2: Trench (El Escape y Los Banditos)',
+                    'texto': '**Tyler, ahora adoptando la identidad de Clancy, logra despertar y tomar conciencia de su realidad. Se revela que su mente está atrapada en Dema, una ciudad circular y opresiva construida con bloques de hormigón y rodeada de lápidas de neón. Dema está gobernada por Nueve Obispos quienes controlan a los ciudadanos mediante el Vialism, una religión falsa que glorifica el suicidio, el auto-sacrificio y la resignación bajo la promesa de un destino llamado “The Glorious Gone”. Así, Clancy logra escapar de la ciudad hacia los valles inexplorados de Trench (Jumpsuit). En esta travesía por las trincheras, es perseguido implacablemente por los obispos, quienes intentan capturarlo mediante la técnica del seizing (poseer cuerpos o controlar mentes a distancia). Sin embargo, Clancy no está solo; cuenta con la ayuda de Josh Dun (The Torchbearer / El Portador de la Antorcha), su guía y compañero leal que enciende faros de esperanza, y de los Banditos, un grupo rebelde que viste cinta amarilla (símbolo de resistencia) para bloquear el control mental de los obispos. En este valle, Clancy también interactúa con Clifford (el buitre mascota de los Banditos que representa la transformación de la muerte en vida) y descubre a Ned, una criatura tímida y tierna que simboliza la inocencia pura, la imaginación y la creatividad del artista que los obispos intentan marchitar. Fortalecido por la resistencia, Clancy sobrevive en las trincheras y planea regresar para liberar a los demás prisioneros.**',
+                    'imagen': 'https://www.billboard.com/wp-content/uploads/media/Twenty-One-Pilots-press-photo-2018-cr-Brad-Heaton-billboard-1548.jpg'
+                },
+                {
+                    'titulo': 'Capítulo 3: Scaled and Icy (La Propaganda y el Control)',
+                    'texto': '**El título del álbum es un anagrama de “Clancy is dead” (Clancy está muerto). Tras los eventos de Trench, Clancy es recapturado por los obispos y llevado de vuelta a Dema. Al no poder doblegar su espíritu rebelde por la fuerza, deciden cambiar de estrategia: lo encierran y lo obligan a protagonizar transmisiones en vivo y conciertos obligatorios alegres (Saturday, The Outside) para lavar el cerebro a la población y transmitir una falsa felicidad corporativa. A pesar de la fachada brillante y colorida, la rebelión sigue viva bajo la superficie. Se observa la intervención de Trash (El Dragón Azul), una majestuosa criatura que simboliza el poder de la imaginación indomable. Aunque inicialmente es utilizado por los obispos como fachada de propaganda feliz, el dragón (asociado a los buitres rebeldes) ataca a la cúpula de Dema, destruyendo el submarino corporativo donde los mantenían cautivos. Paralelamente, se revela que Keons (uno de los Nueve Obispos) simpatiza con los rebeldes y ayuda a Clancy, lo que provoca que los demás obispos lo asesinen por traición. Aprovechando el caos y el conocimiento adquirido, Clancy descubre cómo utilizar el poder de posesión mental (seizing) por cuenta propia, rompe las cadenas de la farsa y escapa de nuevo hacia la costa exterior, preparándose para la ofensiva final.**',
+                    'imagen': 'https://rollingstoneindia.com/wp-content/uploads/2021/05/Twenty-One-Pilots-Pub-3-Mason-Castillo-LO.jpeg'
+                },
+                {
+                    'titulo': 'Capítulo 4: Clancy (El Retorno y el Juicio Final)',
+                    'texto': '**Clancy regresa voluntariamente a Dema y Trench (Overcompensate, Navigating) convertido en un líder de la resistencia mucho más maduro y empoderado. Ha aprendido a utilizar el poder de posesión, lo que le permite influir en las mentes de otros ciudadanos para reclutarlos desde adentro y sabotear a los obispos. Sin embargo, el clímax de esta incursión ocurre cuando Clancy debe cruzar el peligroso estrecho de Paladin Strait para llegar a la orilla donde lo esperan Josh y sus aliados, enfrentándose al abrumador miedo a una recaída final. Al cruzar, se produce el juicio definitivo y el enfrentamiento cara a cara contra Nico. Sin embargo, la confrontación toma un giro devastadoramente realista: en el forcejeo, Clancy es apuñalado por unas astas (simbolismo de que la misma esperanza o las herramientas creativas que utilizaba pueden volverse en su contra). Aunque logra liberar una onda expansiva que somete a Nico, el final de esta etapa revela una verdad dolorosa e inherente a la salud mental: la lucha no es lineal ni se gana de forma definitiva. Así, se descubre que "Clancy" no es solo una persona, sino un manto, un espíritu de resistencia que ha sido tomado por muchos a lo largo de los años. Incluso el propio villano, Nico, fue alguna vez un Clancy que perdió su batalla en el pasado y se convirtió en obispo. Al asumir la capa roja, Clancy acepta el peso de la repetición; el ciclo parece reiniciarse, pero esta vez con la convicción de que la resistencia es un proceso continuo.**',
+                    'imagen': 'https://www.impericon.com/cdn/shop/articles/20240319_clancyalbumcover_2.png?v=1737119612'
+                },
+                {
+                    'titulo': 'Capítulo 5: Breach (La Rendición y el Abrazo del Ciclo)',
+                    'texto': '**En la conclusión de la saga, el concepto de la historia se rompe. Tyler Joseph abandona la necesidad de esconderse detrás de una compleja metáfora de ciencia ficción y mundos imaginarios. Así, en Breach, se revela que el verdadero enemigo no puede ser derrotado simplemente destruyendo una ciudad imaginaria. El ciclo de la depresión y la ansiedad no desaparece mágicamente. En lugar de luchar perpetuamente contra el avatar de Blurryface/Nico, el protagonista comprende que estas sombras oscuras son parte intrínseca de su propia mente y de su historia. De esta manera, la narrativa concluye con un mensaje de aceptación radical: para superar el dolor, hay que dejar de huir de él o combatirlo con elaboradas fantasías de escape. El ciclo se rompe simbólicamente cuando el creador decide dejar ir la ficción, abrazar sus vulnerabilidades y vivir en el mundo real, aceptando que las recaídas son posibles, pero que siempre habrá una nueva mañana para intentar estar bien.**',
+                    'imagen': 'https://static.wikia.nocookie.net/twenty-one-pilots/images/9/9e/Breach.jpg/revision/latest?cb=20250521165146'
+                }
+            ]
+
+            for idx, seccion in enumerate(historia_secciones):
+                st.markdown(
+                    f"<h5 p style='color: #8D0000; font-weight: bold;'>{seccion['titulo']}</h5>",
+                    unsafe_allow_html=True
+                )
+                texto_col, imagen_col = st.columns([3, 1])
+
+                with texto_col:
+                    texto_historia = st.session_state.get(f"historia_texto_{idx}", seccion['texto'])
+                    st.write(texto_historia)
+
+                with imagen_col:
+                    foto_historia = st.session_state.get(f"historia_foto_{idx}", seccion['imagen'])
+                    if foto_historia:
+                        st.image(foto_historia, width=600)
+
+# ============================================================================
+# PÁGINA 4: MAPA DE VIDEOCLIPS (Ubicaciones de grabación)
 # ============================================================================
 
 elif pagina_seleccionada == '🗺️ Mapa':
@@ -573,7 +757,18 @@ elif pagina_seleccionada == '🗺️ Mapa':
             )
 
 # ============================================================================
-# PÁGINA 3: ESTADÍSTICAS (Gráficos y análisis)
+# PÁGINA 5: ESTADÍSTICAS (Gráficos y análisis)
+# ============================================================================
+
+elif pagina_seleccionada == '¿Qué tanto conoces a TOP? |-/':
+    # Mostrar título
+    st.markdown(
+        "<h1 style='text-align: center; color: #8D0000;'>|-/ DISCOGRAFÍA DE TWENTY ONE PILOTS</h1>",
+        unsafe_allow_html=True
+    )
+
+# ============================================================================
+# PÁGINA 5: ESTADÍSTICAS (Gráficos y análisis)
 # ============================================================================
 
 elif pagina_seleccionada == '📊 Estadísticas':
