@@ -77,9 +77,14 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap'); 
+    /* Aplicar la fuente a toda la aplicación */ html, body, [class*="st-"] {
+    font-family: 'Jost', sans-serif;
+    }
+
     /* Cambiar el fondo de la aplicación */
     [data-testid="stAppViewContainer"] {
-        background-image: url("https://wallpapercave.com/wp/wp2148179.jpg");
+        background-image: url("https://i.ibb.co/Ndj2fxhx/Fondex-4.jpg");
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
@@ -119,6 +124,13 @@ st.markdown(
     p {
         color: #000000 !important;
     }
+
+    /* Estilo para el texto general */
+    p {
+        color: #000000 !important; text-shadow: 3px 3px 6px rgba(0,0,0,0.6); 
+
+    }
+
     </style>
     """,
     unsafe_allow_html=True  # Permitir que Streamlit interprete el código HTML/CSS
@@ -167,17 +179,23 @@ if pagina_seleccionada == '🏠 Inicio':
         st.markdown("<h2 style='color: #8D0000;'>ℹ️ Acerca de la Banda</h2>", unsafe_allow_html=True)
         
         # Texto de presentación
-        presentacion = """
-        **Twenty One Pilots** es una banda estadounidense de música alternativa formada en 2009 en Columbus, Ohio.
+
+        st.markdown("""
+                    <div style='text-align: justify; font-size: 16px;'>
+                    <b>Twenty One Pilots</b> es una banda estadounidense de música alternativa formada en 2009 en Columbus, Ohio.
         
-        La banda está integrada por:
-        - **Tyler Joseph**: Vocalista y productor
-        - **Josh Dun**: Baterista
+                    La banda está integrada por:
+                    <ol>
+                    <li>- <b>Tyler Joseph</b>: Vocalista y productor</li>
+                    <li>- <b>Josh Dun</b>: Baterista</li>
+                    </ol>
         
-        La banda se ha consolidado como un fenómeno global gracias a su sonido ecléctico que fusiona elementos de rock alternativo, pop, hip-hop, electrónica y reggae, además de destacar por la profunda carga emocional e introspectiva de sus letras, las cuales abordan temas como la salud mental, la fe y la inseguridad. Con álbumes conceptuales multiplatino como Blurryface (2015) —que hizo historia al lograr que todas sus canciones recibieran al menos la certificación de oro— y una estética visual y narrativa inconfundible, el grupo ha roto récords en la industria musical y se ha ganado una base de fanáticos devotos gracias a sus enérgicos e impredecibles conciertos en vivo.
-        """
+                    La banda se ha consolidado como un fenómeno global gracias a su sonido ecléctico que fusiona elementos de rock alternativo, pop, hip-hop, electrónica y reggae, además de destacar por la profunda carga emocional e introspectiva de sus letras, las cuales abordan temas como la salud mental, la fe y la inseguridad. Con álbumes conceptuales multiplatino como Blurryface (2015) —que hizo historia al lograr que todas sus canciones recibieran al menos la certificación de oro— y una estética visual y narrativa inconfundible, el grupo ha roto récords en la industria musical y se ha ganado una base de fanáticos devotos gracias a sus enérgicos e impredecibles conciertos en vivo.
         
-        st.markdown(presentacion)  # Mostrar el texto
+                    </div>
+                    
+        """, unsafe_allow_html=True)
+        
     
     # ========== COLUMNA 2: DATOS INTERESANTES ==========
     with col2:
@@ -757,7 +775,7 @@ elif pagina_seleccionada == '🗺️ Mapa':
             )
 
 # ============================================================================
-# PÁGINA 5: ESTADÍSTICAS (Gráficos y análisis)
+# PÁGINA 5: JUEGO INTERACTIVO
 # ============================================================================
 
 elif pagina_seleccionada == '¿Qué tanto conoces a TOP? |-/':
