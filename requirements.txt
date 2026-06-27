@@ -1,4 +1,3 @@
-Streamlit
 streamlit_option_menu
 pandas
 openpyxl
