@@ -50,6 +50,8 @@ import folium
 import streamlit.components.v1 as components
 # Importar random para seleccionar videos aleatorios
 import random
+import re
+
 
 # ============================================================================
 # CARGAR LA BASE DE DATOS
@@ -176,12 +178,12 @@ if pagina_seleccionada == '🏠 Inicio':
     
     # ========== COLUMNA 1: INFORMACIÓN GENERAL ==========
     with col1:
-        st.markdown("<h2 style='color: #8D0000;'>ℹ️ Acerca de la Banda</h2>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #8D0000;'>ℹ️ Acerca de la Banda</h3>", unsafe_allow_html=True)
         
         # Texto de presentación
 
         st.markdown("""
-                    <div style='text-align: justify; font-size: 16px;'>
+                    <div style='text-align: justify; font-size: 16px; color: black'>
                     <b>Twenty One Pilots</b> es una banda estadounidense de música alternativa formada en 2009 en Columbus, Ohio.
         
                     La banda está integrada por:
@@ -199,36 +201,46 @@ if pagina_seleccionada == '🏠 Inicio':
     
     # ========== COLUMNA 2: DATOS INTERESANTES ==========
     with col2:
-        st.markdown("<h2 style='color: #8D0000;'>🎸 Datos Interesantes</h2>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #8D0000;'>🎸 Datos Interesantes</h3>", unsafe_allow_html=True)
         
         # Información adicional
-        datos = """
-        **Premios y Reconocimientos:**
-        - Grammy Awards
-        - MTV Video Music Awards
-        - American Music Awards
+
+        st.markdown("""
+                    <div style='text-align: justify; font-size: 16px; color: black'>
+                    <b>Premios y Reconocimientos:</b>
+                    <ol>
+                    - Grammy Awards
+                    </ol>
+                    <ol>
+                    - MTV Video Music Awards
+                    </ol>
+                    <ol>
+                    - American Music Awards
+                    </ol>
+
+                    <b>Álbumes Principales:</b>
+                    - Twenty One Pilots (2009)
+                    - Regional at Best (2011) (actualmente inexistente)
+                    - Vessel (2013)
+                    - Blurryface (2015)
+                    - Trench (2018)
+                    - Scaled and Icy (2021)
+                    - Clancy (2024)
+                    - Breach (2025)
+
+                    <b>Género Musical:</b>
+                    Alternative Hip-Hop / Electropop / Rock
         
-        **Álbumes Principales:**
-        - Twenty One Pilots (2009)
-        - Regional at Best (2011) (actualmente inexistente)
-        - Vessel (2013)
-        - Blurryface (2015)
-        - Trench (2018)
-        - Scaled and Icy (2021)
-        - Clancy (2024)
-        - Breach (2025)
-        
-        **Género Musical:**
-        Alternative Hip-Hop / Electropop / Rock
-        """
-        
-        st.markdown(datos)  # Mostrar los datos
+                    </div>
+                    
+        """, unsafe_allow_html=True)
+
     
     # Agregar separador visual
     st.markdown("---")
     
     # Sección de videos destacados con selección aleatoria
-    st.markdown("<h2 style='text-align: center; color: #8D0000;'>🎬 Videos Destacados</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #8D0000;'>🎬 Videos Destacados</h3>", unsafe_allow_html=True)
     
     # Obtener videos disponibles de la base de datos
     videos_disponibles = df_discografia[df_discografia['Link_mv'].notna()]['Link_mv'].dropna().unique().tolist()
@@ -649,8 +661,9 @@ elif pagina_seleccionada == '🗺️ Mapa':
         "<h1 style='text-align: center; color: #8D0000;'>🗺️ Mapa de Videoclips</h1>",
         unsafe_allow_html=True
     )
+    
     st.markdown(
-        "<p style='text-align: center; color: #000000;'>Explora las ubicaciones de grabación de los videoclips de Twenty One Pilots.</p>",
+        "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Explora los lugares donde fueron grabados los videoclips de Twenty One Pilots. Recuerda que no todas las canciones tienen uno.</p>",
         unsafe_allow_html=True
     )
     st.markdown("---")
@@ -781,9 +794,139 @@ elif pagina_seleccionada == '🗺️ Mapa':
 elif pagina_seleccionada == '¿Qué tanto conoces a TOP? |-/':
     # Mostrar título
     st.markdown(
-        "<h1 style='text-align: center; color: #8D0000;'>|-/ DISCOGRAFÍA DE TWENTY ONE PILOTS</h1>",
+        "<h1 style='text-align: center; color: #8D0000;'>ADIVINA LA CANCIÓN</h1>",
         unsafe_allow_html=True
     )
+    
+    st.markdown(
+        "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Demuestra aquí y ahora si eres realmente un verdadero fan de TOP, o si aún te falta aprender más de la banda ✨.</p>",
+        unsafe_allow_html=True
+    )
+
+    @st.cache_data
+    def load_songs(archivo_excel="mi_base_de_datos.xlsx"):
+        try:
+            df = pd.read_excel(archivo_excel)
+            if "TÍTULO" in df.columns:
+               # Limpiar títulos: remover caracteres no alfabéticos y convertir a minúsculas
+               titles = df["TÍTULO"].astype(str).apply(lambda x: re.sub(r'[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]', '', x).lower().strip())
+               # Filtrar títulos vacíos después de la limpieza
+               titles = [title for title in titles if title]
+               return titles
+            else:
+                st.error("La columna 'TÍTULO' no se encontró en el archivo Excel. Por favor, asegúrate de que el nombre de la columna sea correcto.")
+                return []
+        except FileNotFoundError:
+            st.error(f"El archivo no se encontró en la ruta: {archivo_excel}. Por favor, verifica la ruta y el nombre del archivo.")
+            return []
+        except Exception as e:
+            st.error(f"Ocurrió un error al cargar el archivo Excel: {e}")
+            return []
+
+# --- Inicializar el estado del juego ---
+    def initialize_game():
+        songs = st.session_state.all_songs
+        if not songs:
+            st.error("No hay canciones disponibles para jugar. Por favor, verifica el archivo Excel.")
+            return
+
+        st.session_state.secret_word = random.choice(songs)
+        st.session_state.guessed_letters = set()
+        st.session_state.incorrect_guesses = 0
+        st.session_state.max_incorrect_guesses = 6
+        st.session_state.game_over = False
+        st.session_state.game_won = False
+        st.session_state.message = ""
+
+# --- Función para mostrar la palabra secreta ---
+    def display_word(word, guessed_letters):
+        displayed = ""
+        for char in word:
+            if char == ' ':
+                displayed += '  ' # Doble espacio para indicar un espacio en la palabra
+            elif char in guessed_letters:
+                displayed += char + ' '
+            else:
+                displayed += '_ '
+        return displayed.strip()
+
+# --- Cargar las canciones solo una vez ---
+    if 'all_songs' not in st.session_state:
+        st.session_state.all_songs = load_songs('mi_base_de_datos.xlsx') # ¡Asegúrate de que esta ruta sea correcta!
+        if not st.session_state.all_songs:
+            st.stop() # Detener la ejecución si no hay canciones
+
+# --- Inicializar juego si no está inicializado o si se reinicia ---
+    if 'secret_word' not in st.session_state or st.session_state.game_over:
+        initialize_game()
+
+# --- Mostrar el estado actual del juego ---
+    col_izq, col_centro, col_der = st.columns([1, 4, 1])
+    with col_centro:
+        if not st.session_state.game_over:
+            st.markdown(f"### Palabra: `{display_word(st.session_state.secret_word, st.session_state.guessed_letters)}`")
+            st.write(f"Intentos restantes: {st.session_state.max_incorrect_guesses - st.session_state.incorrect_guesses}")
+            st.write(f"Letras adivinadas: {', '.join(sorted(list(st.session_state.guessed_letters))).upper()}")
+
+    # --- Entrada de la letra ---
+        with st.form(key="form_adivinanza", clear_on_submit=True):
+           guess = st.text_input("Adivina una letra o la palabra completa:", max_chars=20).lower().strip()
+           submit_button = st.form_submit_button(label="Enviar")
+
+        if guess and submit_button:
+            if len(guess) == 1 and guess.isalpha(): # Adivinanza de una sola letra
+                if guess in st.session_state.guessed_letters:
+                    st.warning("Ya adivinaste esa letra. ¡Intenta con otra!")
+                elif guess in st.session_state.secret_word:
+                    st.session_state.guessed_letters.add(guess)
+                # Verificar si ganó después de cada letra correcta
+                    current_display = display_word(st.session_state.secret_word, st.session_state.guessed_letters).replace(' ', '')
+                    cleaned_secret_word = st.session_state.secret_word.replace(' ', '')
+                    if current_display == cleaned_secret_word:
+                        st.session_state.game_won = True
+                        st.session_state.game_over = True
+                        st.session_state.message = "¡Qué increíble es tener a alguien realmente fan de esta increíble banda. ¡Ganaste!"
+                         # <--- Añade esto para refrescar la pantalla inmediatamente con el mensaje
+                else:
+                    st.session_state.incorrect_guesses += 1
+                    st.session_state.guessed_letters.add(guess) # También añadir letras incorrectas a las adivinadas
+                    st.error("¡Incorrecto!")
+            elif len(guess) > 1 and guess.isalpha(): # Adivinanza de la palabra completa
+                if guess == st.session_state.secret_word:
+                    st.session_state.game_won = True
+                    st.session_state.game_over = True
+                    st.session_state.message = "¡Qué increíble es tener a alguien realmente fan de esta increíble banda. ¡Ganaste!"
+                     # <--- Añade esto también
+                else:
+                    st.session_state.incorrect_guesses = st.session_state.max_incorrect_guesses # Pierde todos los intentos si falla la palabra
+                    st.session_state.game_over = True
+                    st.session_state.message = "Oooh, inténtalo de nuevo, quizás aún deberías conocer más de la banda. ¡Te quedaste sin intentos!"
+                     # <--- Y aquí para forzar la actualización
+            else:
+                st.warning("Por favor, ingresa solo una letra o la palabra completa (solo caracteres alfabéticos).")
+        
+        # Limpiar el input después de enviar
+            
+
+    # --- Verificar si se agotaron los intentos ---
+        if st.session_state.incorrect_guesses >= st.session_state.max_incorrect_guesses and not st.session_state.game_won:
+            st.session_state.game_over = True
+            if not st.session_state.message: # Solo si no hay un mensaje previo de adivinar palabra completa
+                st.session_state.message = "Te quedaste sin intentos. Oooh, inténtalo de nuevo, quizás aún deberías conocer más de la banda."
+             # <--- Asegúrate de que este rerun esté presente para que se renderice el bloque inferior de fin de juego
+
+# --- Mensaje de fin de juego y botón para reiniciar ---
+    if st.session_state.game_over:
+        st.markdown(f"### La palabra secreta era: **{st.session_state.secret_word.upper()}**")
+    
+    # Mostramos el mensaje (Ganaste, Perdiste, o Sin intentos) de forma estática
+        st.info(st.session_state.message)
+    
+    # El juego solo se reiniciará cuando el usuario haga clic en este botón explícitamente
+        if st.button("¡Jugar de nuevo!"):
+            initialize_game()
+            st.rerun() # Este rerun dentro del botón sí es correcto porque el usuario acaba de pedir reiniciar
+
 
 # ============================================================================
 # PÁGINA 5: ESTADÍSTICAS (Gráficos y análisis)
