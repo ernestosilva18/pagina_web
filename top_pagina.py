@@ -79,9 +79,31 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap'); 
-    /* Aplicar la fuente a toda la aplicación */ html, body, [class*="st-"] {
-    font-family: 'Jost', sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css?family=Material+Icons');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&display=swap');
+
+    /* Aplicar la fuente a toda la aplicación */
+    html, body, [class*="st-"] {
+        font-family: 'Jost', sans-serif;
+    }
+
+    /* Asegurar que los íconos de Streamlit usen las fuentes de Material Icons/Symbols */
+    .material-icons,
+    .material-icons-outlined,
+    .material-icons-round,
+    .material-icons-sharp,
+    .material-icons-two-tone,
+    .material-symbols-outlined {
+        font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    }
+
+    /* Corregir el botón de contraer/expandir la barra lateral */
+    [data-testid="collapsedControl"] span,
+    [data-testid="collapsedControl"] i,
+    [data-testid="collapsedControl"] div {
+        font-family: 'Material Icons', 'Material Symbols Outlined' !important;
     }
 
     /* Cambiar el fondo de la aplicación */
@@ -138,6 +160,59 @@ st.markdown(
     unsafe_allow_html=True  # Permitir que Streamlit interprete el código HTML/CSS
 )
 
+# Ajustes adicionales con JavaScript para reemplazar los textos de iconos que se muestran como nombres
+components.html(
+    """
+    <script>
+    (function() {
+      function updateLabels() {
+        try {
+          const doc = window.parent.document;
+          if (!doc) return;
+
+          const collapseButton = doc.querySelector('[data-testid="collapsedControl"]');
+          if (collapseButton) {
+            const iconSpan = collapseButton.querySelector('span, div');
+            if (iconSpan && /keyboard_double/.test(iconSpan.innerText)) {
+              iconSpan.innerText = '⇤⇥';
+              iconSpan.style.fontFamily = 'Arial, sans-serif';
+              iconSpan.style.fontSize = '18px';
+            }
+          }
+
+          const replacements = {
+            'contrast_mode': '',
+            'system': 'Auto',
+            'light_mode': 'Claro',
+            'dark_mode': 'Oscuro'
+          };
+
+          Object.keys(replacements).forEach(key => {
+            const elements = Array.from(doc.querySelectorAll('span, div, button'));
+            elements.forEach(el => {
+              if (el.innerText.trim() === key) {
+                el.innerText = replacements[key];
+              }
+            });
+          });
+        } catch (error) {
+          // No detener la aplicación si no se puede acceder al DOM padre
+        }
+      }
+
+      const observer = new MutationObserver(updateLabels);
+      setTimeout(() => {
+        updateLabels();
+        if (window.parent && window.parent.document && window.parent.document.body) {
+          observer.observe(window.parent.document.body, { childList: true, subtree: true });
+        }
+      }, 500);
+    })();
+    </script>
+    """,
+    height=0,
+)
+
 # ============================================================================
 # CREAR MENÚ DE NAVEGACIÓN EN LA BARRA LATERAL
 # ============================================================================
@@ -146,8 +221,8 @@ with st.sidebar:
     # Crear un menú con opciones de navegación
     pagina_seleccionada = option_menu(
         menu_title="🎵 MENÚ PRINCIPAL",  # Título del menú
-        options=['🏠 Inicio', '💿 Discografía', '📖 Lore', '🗺️ Mapa', '¿Qué tanto conoces a TOP? |-/', '📊 Estadísticas'],  # Opciones disponibles
-        icons=['house', 'music-note-list', 'map', 'graph-up'],  # Iconos de cada opción
+        options=['🏠 Inicio', '💿 Discografía', '📖 Lore', '🗺️ Mapa', '❓ ¿Qué tanto conoces a TOP? |-/', '📊 Estadísticas'],  # Opciones disponibles
+        icons=['house', 'music-note-list', 'book', 'map', 'question-circle', 'graph-up'],  # Iconos de cada opción
         menu_icon="mic",  # Ícono principal del menú
         default_index=0  # La opción seleccionada por defecto (0 = Inicio)
     )
@@ -283,6 +358,27 @@ elif pagina_seleccionada == '💿 Discografía':
     
     # Agregar separador
     st.markdown("---")
+
+    # Estilo de botones blancos para la sección de Discografía
+    st.markdown(
+        """
+        <style>
+        div.stButton > button {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border: 1px solid #000000 !important;
+            box-shadow: none !important;
+        }
+        div.stButton > button:hover {
+            background-color: #f0f0f0 !important;
+        }
+        div.stButton > button:focus-visible {
+            outline: 2px solid #000000 !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     
     portada_col = 'Link_portada' if 'Link_portada' in df_discografia.columns else None
     albumes = df_discografia['Álbum'].dropna().unique()
@@ -326,6 +422,18 @@ elif pagina_seleccionada == '💿 Discografía':
                     return val
         return None
 
+    def obtener_portada_por_album(album):
+        if not isinstance(album, str) or not album.strip():
+            return None
+        album_norm = album.strip().lower()
+
+        if 'Link_portada' in df_discografia.columns:
+            coincidencias = df_discografia[df_discografia['Álbum'].astype(str).str.strip().str.lower() == album_norm]
+            if not coincidencias.empty:
+                valores_portada = coincidencias['Link_portada'].dropna().unique()
+                if len(valores_portada) > 0:
+                    return valores_portada[0]
+
     if 'song_detalle' not in st.session_state:
         st.session_state['song_detalle'] = None
     if 'album_abierto' not in st.session_state:
@@ -338,6 +446,9 @@ elif pagina_seleccionada == '💿 Discografía':
         col_img, col_info = st.columns([1, 2])
         with col_img:
             link_portada = buscar_valor(fila_det, ['Link_portada'])
+            if not link_portada:
+                album_actual = st.session_state.get('song_detalle', {}).get('album', '')
+                link_portada = obtener_portada_por_album(album_actual)
             if link_portada:
                 st.image(link_portada, width=320)
             foto_lugar = buscar_valor(fila_det, ['Fotografía_lugar', 'Fotografia_lugar', 'Fotografía Lugar', 'Fotografia Lugar'])
@@ -481,7 +592,7 @@ elif pagina_seleccionada == '💿 Discografía':
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================================================================
-# PÁGINA 2: DISCOGRAFÍA (Álbumes y canciones)
+# PÁGINA 3: LORE
 # ============================================================================
 
 elif pagina_seleccionada == '📖 Lore':
@@ -600,6 +711,22 @@ elif pagina_seleccionada == '📖 Lore':
 
         if 'mostrar_historia' not in st.session_state:
             st.session_state.mostrar_historia = False
+
+        st.markdown(
+            """
+            <style>
+            div.stButton > button {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                border: 1px solid #000000 !important;
+            }
+            div.stButton > button:hover {
+                background-color: #f2f2f2 !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
 
         if st.button('Conoce la Historia detrás de las canciones', key='btn_ir_historia'):
             st.session_state.mostrar_historia = not st.session_state.mostrar_historia
@@ -791,7 +918,7 @@ elif pagina_seleccionada == '🗺️ Mapa':
 # PÁGINA 5: JUEGO INTERACTIVO
 # ============================================================================
 
-elif pagina_seleccionada == '¿Qué tanto conoces a TOP? |-/':
+elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
     # Mostrar título
     st.markdown(
         "<h1 style='text-align: center; color: #8D0000;'>ADIVINA LA CANCIÓN</h1>",
@@ -864,11 +991,36 @@ elif pagina_seleccionada == '¿Qué tanto conoces a TOP? |-/':
     col_izq, col_centro, col_der = st.columns([1, 4, 1])
     with col_centro:
         if not st.session_state.game_over:
-            st.markdown(f"### Palabra: `{display_word(st.session_state.secret_word, st.session_state.guessed_letters)}`")
+            # Mostrar la palabra en un recuadro blanco con texto negro
+            word_display = display_word(st.session_state.secret_word, st.session_state.guessed_letters)
+            st.markdown(f"<div style='background:#ffffff;color:#000000;padding:12px;border-radius:10px;display:inline-block;'>" \
+                        f"<strong>Palabra:</strong> <code style='background:transparent;color:#000000;border:none;'>{word_display}</code></div>",
+                        unsafe_allow_html=True)
             st.write(f"Intentos restantes: {st.session_state.max_incorrect_guesses - st.session_state.incorrect_guesses}")
             st.write(f"Letras adivinadas: {', '.join(sorted(list(st.session_state.guessed_letters))).upper()}")
 
     # --- Entrada de la letra ---
+        st.markdown(
+            """
+            <style>
+            .stTextInput>div>div>input,
+            .stTextInput>div>div>textarea {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                border-color: #000000 !important;
+            }
+            /* Estilar el botón de envío dentro del formulario */
+            .stForm button {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                border: 1px solid #000000 !important;
+                box-shadow: none !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
         with st.form(key="form_adivinanza", clear_on_submit=True):
            guess = st.text_input("Adivina una letra o la palabra completa:", max_chars=20).lower().strip()
            submit_button = st.form_submit_button(label="Enviar")
@@ -923,6 +1075,20 @@ elif pagina_seleccionada == '¿Qué tanto conoces a TOP? |-/':
         st.info(st.session_state.message)
     
     # El juego solo se reiniciará cuando el usuario haga clic en este botón explícitamente
+        # Estilar el botón de reinicio para fondo blanco y texto negro
+        st.markdown(
+            """
+            <style>
+            .stButton>button {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                border: 1px solid #000000 !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
         if st.button("¡Jugar de nuevo!"):
             initialize_game()
             st.rerun() # Este rerun dentro del botón sí es correcto porque el usuario acaba de pedir reiniciar
@@ -975,21 +1141,6 @@ elif pagina_seleccionada == '📊 Estadísticas':
         use_container_width=True
     )
     
-    # ========== DESCARGA DE DATOS ==========
-    st.markdown("---")
-    st.markdown("<h2 style='color: #8D0000;'>⬇️ Descargar Datos</h2>", unsafe_allow_html=True)
-    
-    # Convertir el DataFrame a archivo CSV
-    csv_data = df_discografia.to_csv(index=False)
-    # .to_csv(): convierte el DataFrame a formato CSV (valores separados por comas)
-    
-    # Crear un botón de descarga
-    st.download_button(
-        label="📥 Descargar como CSV",  # Texto del botón
-        data=csv_data,  # Los datos a descargar
-        file_name="discografia_top.csv",  # Nombre del archivo
-        mime="text/csv"  # Tipo de archivo (CSV)
-    )
 
 # ============================================================================
 # FOOTER (Pie de página)
