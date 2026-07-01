@@ -1,81 +1,40 @@
-# ============================================================================
 # PÁGINA WEB DE TWENTY ONE PILOTS CON STREAMLIT
 # ============================================================================
-# Antes de ejecutar este script, asegurate de estar en la carpeta correcta:
-# cd ruta_de_tu_carpeta (ej: cd c:\Users\marti\OneDrive\Escritorio\PC3)
 
-# ============================================================================
-# PASO 1: CREAR ENTORNO VIRTUAL (Ejecuta esto en la terminal)
-# ============================================================================
-# python -m venv .venv
-# Esto crea un entorno virtual donde instalaremos las librerías necesarias
-
-# ============================================================================
-# PASO 2: ACTIVAR ENTORNO VIRTUAL (Ejecuta esto en la terminal)
-# ============================================================================
-# En Windows:
-# .venv\Scripts\activate
-# En MacOS/Linux:
-# source .venv/bin/activate
-
-# ============================================================================
-# PASO 3: INSTALAR STREAMLIT Y LIBRERÍAS (Ejecuta esto en la terminal)
-# ============================================================================
-# pip install streamlit
-# pip install streamlit-option-menu
-# pip install pandas
-# pip install openpyxl
-# pip install folium
-
-# ============================================================================
-# PASO 4: EJECUTAR LA PÁGINA WEB (Ejecuta esto en la terminal)
-# ============================================================================
-# python -m streamlit run top_pagina.py
-
-# ============================================================================
-# IMPORTAR LIBRERÍAS
-# ============================================================================
-
-# Importar Streamlit: librería principal para crear aplicaciones web
+#En primer lugar, debemos importar las librerías necesarias para la página web.
 import streamlit as st
-# Importar option_menu: para crear menús de navegación personalizados
 from streamlit_option_menu import option_menu
-# Importar pandas: para manipular datos (DataFrames)
 import pandas as pd
-# Importar openpyxl: para leer archivos Excel
-import openpyxl
-# Importar folium para mapas interactivos
-
 import folium
 import streamlit.components.v1 as components
-# Importar random para seleccionar videos aleatorios
 import random
 import re
 
-
-# ============================================================================
-# CARGAR LA BASE DE DATOS
-# ============================================================================
-
-# Leer el archivo Excel y guardarlo en la variable df_discografia
+#Luego, debemos cargar los datos desde el archivo Excel donde hice mi base de datos para poder mostrarlos en la página y que puedan ser leídos para el resto de la página.
 df_discografia = pd.read_excel("mi_base_de_datos.xlsx")
-# Esto carga todos los datos de canciones desde el archivo Excel
 
-# ============================================================================
-# CONFIGURAR LA PÁGINA
-# ============================================================================
 
-# Establecer el título y el ícono de la página en la pestaña del navegador
+#Ahora iniciamos a configurar la página con el título, el icono y el diseño ancho.
 st.set_page_config(
-    page_title="Twenty One Pilots | Discografía",  # Título de la pestaña
-    page_icon="🎵",  # Ícono de la pestaña
-    layout="wide"  # Diseño de página ancha (más espacio)
+    page_title="Twenty One Pilots | Discografía",
+    page_icon="🎵",
+    layout="wide"
+)
+
+#Luego establecemos el título y el ícono de la página en la pestaña del navegador. Luego, debemos volver a configurar la página para asegurar que los valores sean consistentes.
+st.set_page_config(
+    page_title="Twenty One Pilots | Discografía",  #Título de la pestaña
+    page_icon="🎵",  #Ícono de la pestaña
+    layout="wide"  #Diseño de página ancha (más espacio)
 )
 
 # ============================================================================
-# APLICAR ESTILOS CSS PERSONALIZADOS (Fondo de pantalla)
+# APLICAR ESTILOS PERSONALIZADOS (Fondo de pantalla y estilos para el texto)
 # ============================================================================
 
+#En este apartado, principalmente creé estilos para que, en cada apartado de la página, solo utilice la variable asociada al estilo: h1, 2, 3, etc. 
+#Esto permite que, si quiero cambiar el color de todos los títulos, solo tenga que cambiarlo en un lugar y no en cada título de la página. 
+#Además, también agregué un fondo de pantalla para toda la página y un estilo para que el texto se lea mejor.
 st.markdown(
     """
     <style>
@@ -157,89 +116,37 @@ st.markdown(
 
     </style>
     """,
-    unsafe_allow_html=True  # Permitir que Streamlit interprete el código HTML/CSS
-)
-
-# Ajustes adicionales con JavaScript para reemplazar los textos de iconos que se muestran como nombres
-components.html(
-    """
-    <script>
-    (function() {
-      function updateLabels() {
-        try {
-          const doc = window.parent.document;
-          if (!doc) return;
-
-          const collapseButton = doc.querySelector('[data-testid="collapsedControl"]');
-          if (collapseButton) {
-            const iconSpan = collapseButton.querySelector('span, div');
-            if (iconSpan && /keyboard_double/.test(iconSpan.innerText)) {
-              iconSpan.innerText = '⇤⇥';
-              iconSpan.style.fontFamily = 'Arial, sans-serif';
-              iconSpan.style.fontSize = '18px';
-            }
-          }
-
-          const replacements = {
-            'contrast_mode': '',
-            'system': 'Auto',
-            'light_mode': 'Claro',
-            'dark_mode': 'Oscuro'
-          };
-
-          Object.keys(replacements).forEach(key => {
-            const elements = Array.from(doc.querySelectorAll('span, div, button'));
-            elements.forEach(el => {
-              if (el.innerText.trim() === key) {
-                el.innerText = replacements[key];
-              }
-            });
-          });
-        } catch (error) {
-          // No detener la aplicación si no se puede acceder al DOM padre
-        }
-      }
-
-      const observer = new MutationObserver(updateLabels);
-      setTimeout(() => {
-        updateLabels();
-        if (window.parent && window.parent.document && window.parent.document.body) {
-          observer.observe(window.parent.document.body, { childList: true, subtree: true });
-        }
-      }, 500);
-    })();
-    </script>
-    """,
-    height=0,
+    unsafe_allow_html=True  #Este código es para permitir que streamlit interprete el código HTML/CSS
 )
 
 # ============================================================================
-# CREAR MENÚ DE NAVEGACIÓN EN LA BARRA LATERAL
+# SEGUNDO: MENÚ DE NAVEGACIÓN EN LA BARRA LATERAL
 # ============================================================================
 
+#En primer lugar, utilizamos la función st.sidebar para crear una barra lateral donde colocaremos el menú de navegación principal.
 with st.sidebar:
-    # Crear un menú con opciones de navegación
+    #Luego, utilizamos option_menu para crear un menú interactivo que permita al usuario seleccionar entre diferentes páginas.
     pagina_seleccionada = option_menu(
-        menu_title="🎵 MENÚ PRINCIPAL",  # Título del menú
-        options=['🏠 Inicio', '💿 Discografía', '📖 Lore', '🗺️ Mapa', '❓ ¿Qué tanto conoces a TOP? |-/', '📊 Estadísticas'],  # Opciones disponibles
-        icons=['house', 'music-note-list', 'book', 'map', 'question-circle', 'graph-up'],  # Iconos de cada opción
-        menu_icon="mic",  # Ícono principal del menú
-        default_index=0  # La opción seleccionada por defecto (0 = Inicio)
+        menu_title="🎵 MENÚ PRINCIPAL",  #Título que se mostrará en la parte superior del menú.
+        options=['🏠 Inicio', '💿 Discografía', '📖 Lore', '🗺️ Mapa', '❓ ¿Qué tanto conoces a TOP? |-/', '📊 Estadísticas'],  #Opciones disponibles que el usuario puede seleccionar.
+        icons=['house', 'music-note-list', 'book', 'map', 'question-circle', 'graph-up'],  #Iconos de cada opción para una mejor visualización y estética.
+        menu_icon="mic",  #Ícono principal del menú que representa la aplicación.
+        default_index=0  #La opción seleccionada por defecto (0 = Inicio) cuando la página se carga
     )
-    # El menú se guardará en la variable 'pagina_seleccionada'
+    #Finalmente, todo este apartado lo almacenamos en la variable 'pagina_seleccionada' para usarlo en toda la página y mostrar el contenido correspondiente según la opción seleccionada por el usuario.
 
 # ============================================================================
-# PÁGINA 1: INICIO (Presentación de la banda)
+# TERCERO: PÁGINA 1: INICIO (Presentación de la banda)
 # ============================================================================
 
 if pagina_seleccionada == '🏠 Inicio':
-    # Mostrar título principal centrado y con color rojo
+    #En primer lugar, utilizamos el comando st.markdown para que podamos mostrar el título principal de la página con un estilo visual más llamativo, utilizando uno de los estilos que creé al inicio.
     st.markdown(
         "<h1 style='text-align: center; color: #8D0000;'>TWENTY ONE PILOTS</h1>",
         unsafe_allow_html=True
     )
     
-    # Agregar el logo oficial de la banda centrado
+    #Luego, insertamos el logo oficial de la banda para mejorar la estética de la página y que el usuario pueda identificarla visualmente de manera inmediata a través de el comando st.markdown y un código HTML que permite centrar la imagen y darle un tamaño adecuado.
     st.markdown(
         "<div style='display: flex; justify-content: center; margin: 20px 0;'>"
         "<img src='https://logos-world.net/wp-content/uploads/2024/12/21-Pilots-Logo-2011.png' "
@@ -248,15 +155,15 @@ if pagina_seleccionada == '🏠 Inicio':
         unsafe_allow_html=True
     )
     
-    # Crear dos columnas para organizar el contenido
+    #Después, creamos dos columnas para ordenar el contenido de forma más clara y de paso dar algo de información de la banda antes de continuar.
     col1, col2 = st.columns(2)
     
-    # ========== COLUMNA 1: INFORMACIÓN GENERAL ==========
+    #-COLUMNA 1: INFORMACIÓN GENERAL-
     with col1:
+        #En este apartado, organizamos la información general de la banda dentro de la primera columna para que el usuario pueda conocerla de forma ordenada. Además, utilizamos el comando st.markdown para que podamos mostrar el título de la sección de información general con un estilo visual más llamativo, utilizando otro de los estilos que creé al inicio.
         st.markdown("<h3 style='color: #8D0000;'>ℹ️ Acerca de la Banda</h3>", unsafe_allow_html=True)
         
-        # Texto de presentación
-
+        #Posteriormente, presentamos el texto introductorio de la banda para que el usuario comprenda su origen y su trayectoria de manera sencilla a través del comando st.markdown y un código HTML que nos permite justificar el texto, darle un tamaño adecuado y un color que contraste con el fondo de la página.
         st.markdown("""
                     <div style='text-align: justify; font-size: 16px; color: black'>
                     <b>Twenty One Pilots</b> es una banda estadounidense de música alternativa formada en 2009 en Columbus, Ohio.
@@ -274,12 +181,12 @@ if pagina_seleccionada == '🏠 Inicio':
         """, unsafe_allow_html=True)
         
     
-    # ========== COLUMNA 2: DATOS INTERESANTES ==========
+    #-COLUMNA 2: DATOS INTERESANTES-
     with col2:
+        # Ahora, añadimos una segunda columna con datos destacados para que completemos la presentación con información adicional relevante. Nuevamente utilizamos el comando st.markdown para que podamos mostrar el título de la sección de datos interesantes con un estilo visual más llamativo, utilizando otro de los estilos que creé al inicio.
         st.markdown("<h3 style='color: #8D0000;'>🎸 Datos Interesantes</h3>", unsafe_allow_html=True)
         
-        # Información adicional
-
+        #Después, mostramos información complementaria sobre premios, álbumes y género para que el usuario obtenga una visión más completa de la banda.
         st.markdown("""
                     <div style='text-align: justify; font-size: 16px; color: black'>
                     <b>Premios y Reconocimientos:</b>
@@ -311,55 +218,53 @@ if pagina_seleccionada == '🏠 Inicio':
         """, unsafe_allow_html=True)
 
     
-    # Agregar separador visual
+    #Después, incorporamos un separador visual para que la transición entre secciones se perciba de forma más limpia a traves del comando st.markdown y un código que nos permite crear una línea horizontal.
     st.markdown("---")
     
-    # Sección de videos destacados con selección aleatoria
+    #Luego, utilizamos el comando st.markdown para que podamos mostrar el título de la sección de videos destacados y le asignamos el estilo correspondiente.
     st.markdown("<h3 style='text-align: center; color: #8D0000;'>🎬 Videos Destacados</h3>", unsafe_allow_html=True)
     
-    # Obtener videos disponibles de la base de datos
+    #Posteriormente, consultamos la base de datos para que podamos obtener los enlaces de los videos disponibles y los almacenamos en la variable 'videos_disponibles' para que podamos utilizarlos más adelante.
     videos_disponibles = df_discografia[df_discografia['Link_mv'].notna()]['Link_mv'].dropna().unique().tolist()
     
     if len(videos_disponibles) >= 2:
-        # Seleccionar 2 videos aleatorios
+        #Después, seleccionamos dos videos de forma aleatoria para que la página presente contenido variado cada vez que se recargue la sección. 
+        #Esto lo hacemos utilizando la función random.sample para que podamos obtener dos videos distintos de la lista de videos disponibles y los almacenamos en la variable 'videos_seleccionados'.
         videos_seleccionados = random.sample(list(videos_disponibles), min(2, len(videos_disponibles)))
         
-        # Crear columnas para mostrar videos
+        #En seguida, creamos dos columnas para que podamos mostrar ambos videos de manera equilibrada.
         video_col1, video_col2 = st.columns(2)
         
         with video_col1:
-            st.video(videos_seleccionados[0])  # Video de YouTube
+            #Luego, insertamos el primer video en la columna correspondiente para que el usuario lo pueda reproducir de inmediato a través del comando st.video y le pasamos el enlace del primer video seleccionado.
+            st.video(videos_seleccionados[0])  #Video de YouTube
         
         with video_col2:
             if len(videos_seleccionados) > 1:
-                st.video(videos_seleccionados[1])  # Video de YouTube
-    else:
-        st.markdown(
-            "<p style='text-align: center; color: #000000;'>No hay videos disponibles en la base de datos.</p>",
-            unsafe_allow_html=True
-        )
+                #Por último, añadimos el segundo video en la segunda columna para completar la vista de contenido destacado. Nuevamente utilizamos el comando st.video y le pasamos el enlace del segundo video seleccionado.
+                st.video(videos_seleccionados[1])  #Video de YouTube
 
 # ============================================================================
-# PÁGINA 2: DISCOGRAFÍA (Álbumes y canciones)
+# CUARTO: PÁGINA 2: DISCOGRAFÍA (Álbumes y canciones)
 # ============================================================================
 
-elif pagina_seleccionada == '💿 Discografía':
-    # Mostrar título
+elif pagina_seleccionada == '💿 Discografía': 
+    #En primer lugar, utilizamos este bloque para mostrar el título principal de la sección y presentar una breve introducción sobre la discografía.
     st.markdown(
         "<h1 style='text-align: center; color: #8D0000;'>|-/ DISCOGRAFÍA DE TWENTY ONE PILOTS</h1>",
         unsafe_allow_html=True
     )
     
-    # Pequeña introducción
+    #Ahora, utilizamos este mensaje para contextualizar al usuario y explicarle que podrá explorar los álbumes, canciones y detalles de cada una de ellas con el comando st.markdown.
     st.markdown(
         "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Aquí puedes explorar todos los álbumes y canciones de Twenty One Pilots, ver detalles de cada canción y conocer el mensaje detrás de cada una de ellas.</p>",
         unsafe_allow_html=True
     )
     
-    # Agregar separador
+    #Luego, añadimos un separador para que la sección se vea más ordenada y clara.
     st.markdown("---")
 
-    # Estilo de botones blancos para la sección de Discografía
+    #Posteriormente, aplicamos un estilo a los botones para que la discografía se vea más limpia y consistente con el diseño general de la página a través del comando st.markdown y un código CSS que nos permite personalizar el color de fondo, el color del texto, el borde y el efecto al pasar el cursor sobre los botones interactivos.
     st.markdown(
         """
         <style>
@@ -380,27 +285,32 @@ elif pagina_seleccionada == '💿 Discografía':
         unsafe_allow_html=True
     )
     
+    #Luego, determinamos si la base de datos cuenta con una columna de portadas para que podamos mostrar imágenes de los álbumes cuando estén disponibles y almacenamos el nombre de la columna en la variable 'portada_col'.
     portada_col = 'Link_portada' if 'Link_portada' in df_discografia.columns else None
     albumes = df_discografia['Álbum'].dropna().unique()
 
+    #Ahora empezamos con lo bueno, definimos esta función para que podamos identificar columnas que no necesitamos mostrar en los filtros o en el procesamiento adicional. Esto a través de la normalización del nombre de la columna y la verificación contra una lista de nombres excluidos.
     def columna_excluida(col):
         nombre = col.lower().replace(' ', '').replace('_', '')
         return nombre in ['latitudvideo', 'longitudvideo', 'latitud', 'longitud', 'amplitud']
 
+    #Posteriormente, creamos otra función para que podamos obtener el nombre de una canción de forma más sencilla, incluso si el DataFrame usa distintos nombres de columna. 
+    #Luego de eso, verificamos si el índice de la fila contiene un valor que pueda ser considerado como nombre de canción y lo devolvemos si es válido. Si no se encuentra ningún nombre válido, devolvemos una cadena vacía.
+    #Esto realmente es innecesario, principalmente porque la columna tiene ya el nombre de las canciones. Sin embargo, decidí ponerlo así en caso alguien en el futuro decida usar el código u otra base de datos que no tenga la columna de canciones con el nombre exacto.
     def obtener_nombre_cancion(fila):
         candidatos = [
             'TÍTULO', 'Título', 'TITULO', 'Canción', 'Cancion', 'Nombre', 'Nombre de canción', 'Nombre de cancion',
             'Titulo', 'Título', 'Title', 'title', 'track', 'Track',
             'track_name', 'Track Name', 'Song', 'song'
         ]
-        for c in candidatos:
+        for c in candidatos: #Aquí, recorremos la lista de candidatos para que podamos verificar si alguna de las columnas coincide con los nombres que podrían representar el título de la canción.
             if c in fila.index:
                 val = fila.get(c)
                 if pd.notna(val) and str(val).strip() != '':
                     return str(val).strip()
         for col in fila.index:
             col_low = col.lower()
-            if any(k in col_low for k in ['nombre', 'titulo', 'title', 'track', 'song']):
+            if any(k in col_low for k in ['nombre', 'titulo', 'title', 'track', 'song']): #Aquí verificamos si el nombre de la columna contiene palabras clave que podrían indicar que es el título de la canción.
                 val = fila.get(col)
                 if pd.notna(val) and str(val).strip() != '':
                     return str(val).strip()
@@ -414,6 +324,8 @@ elif pagina_seleccionada == '💿 Discografía':
             pass
         return ''
 
+    #Ahora, utilizamos esta función para que podamos recuperar valores de una fila sin importar el nombre exacto de la columna. 
+    #Para ello, recorremos una lista de nombres de columna candidatos y devolvemos el primer valor no nulo que encontremos. Si no se encuentra ningún valor válido, devolvemos None.
     def buscar_valor(fila, candidatos):
         for c in candidatos:
             if c in fila.index:
@@ -422,6 +334,8 @@ elif pagina_seleccionada == '💿 Discografía':
                     return val
         return None
 
+    #Luego, definimos esta función para que podamos obtener la portada de un álbum a partir de la coincidencia del nombre del álbum en la base de datos. 
+    #Además, normalizamos el nombre del álbum para evitar problemas de mayúsculas, minúsculas o espacios en blanco. Si encontramos coincidencias, devolvemos el primer valor de portada disponible; si no, devolvemos None.
     def obtener_portada_por_album(album):
         if not isinstance(album, str) or not album.strip():
             return None
@@ -432,19 +346,21 @@ elif pagina_seleccionada == '💿 Discografía':
             if not coincidencias.empty:
                 valores_portada = coincidencias['Link_portada'].dropna().unique()
                 if len(valores_portada) > 0:
-                    return valores_portada[0]
+                    return valores_portada[0] 
 
-    if 'song_detalle' not in st.session_state:
+    #Posteriormente, inicializamos estas variables de sesión para que podamos recordar si el usuario ha abierto un detalle de canción o un álbum específico.
+    if 'song_detalle' not in st.session_state: #Este código es para que, si el usuario ha abierto un detalle de canción, podamos recordar esa acción y mostrar la vista correspondiente en lugar de la lista general de álbumes y canciones.
         st.session_state['song_detalle'] = None
-    if 'album_abierto' not in st.session_state:
+    if 'album_abierto' not in st.session_state: #Este otro código es para que, si el usuario ha abierto un álbum específico, podamos recordar esa acción y mostrar la lista de canciones correspondientes en lugar de la lista general de álbumes.
         st.session_state['album_abierto'] = None
 
-    if st.session_state.get('song_detalle'):
-        fila_det = pd.Series(st.session_state['song_detalle']['fila'])
+    #Luego, verificamos si el usuario ha seleccionado ver los detalles de una canción para que podamos mostrar esa vista en lugar de la lista general.
+    if st.session_state.get('song_detalle'): #Si el usuario ha seleccionado ver los detalles de una canción, mostramos la información detallada de esa canción en lugar de la lista general de álbumes y canciones.
+        fila_det = pd.Series(st.session_state['song_detalle']['fila']) 
         nombre_det = obtener_nombre_cancion(fila_det) or 'Título desconocido'
         st.markdown(f"<h2 style='color: #8D0000;'>Detalles de la canción: {nombre_det}</h2>", unsafe_allow_html=True)
         col_img, col_info = st.columns([1, 2])
-        with col_img:
+        with col_img: #Aquí, mostramos la portada de la canción si está disponible en la base de datos. Si no, intentamos obtener la portada del álbum correspondiente. Además, mostramos la fotografía del lugar si está disponible y el enlace al videoclip si existe. Esto lo logramos utilizando la función buscar_valor para obtener los valores de las columnas correspondientes y luego mostramos las imágenes y enlaces utilizando st.image y st.markdown.
             link_portada = buscar_valor(fila_det, ['Link_portada'])
             if not link_portada:
                 album_actual = st.session_state.get('song_detalle', {}).get('album', '')
@@ -457,7 +373,8 @@ elif pagina_seleccionada == '💿 Discografía':
                 link_mv = buscar_valor(fila_det, ['Link_mv', 'Link MV', 'Link_MV', 'Linkmv'])
                 if link_mv:
                     st.markdown(f"<p style='color: #000000; margin-top: 10px;'><strong>Videoclip:</strong> <a href='{link_mv}' target='_blank'>{link_mv}</a></p>", unsafe_allow_html=True)
-        with col_info:
+        with col_info: #Aquí, mostramos la información detallada de la canción, incluyendo el año de lanzamiento, las reproducciones en Spotify, el género, la duración, el enlace a las letras y cualquier mensaje adicional. Utilizamos la función buscar_valor para obtener los valores de las columnas correspondientes y luego mostramos la información utilizando st.markdown.
+            #Luego, generamos las variables para mostrar la información detallada de la canción, incluyendo el año de lanzamiento, las reproducciones en Spotify, el género, la duración, el enlace a las letras y cualquier mensaje adicional.
             año = buscar_valor(fila_det, ['Año', 'Year'])
             if año:
                 st.markdown(f"<p style='color: #000000;'><strong>Año:</strong> {año}</p>", unsafe_allow_html=True)
@@ -479,25 +396,27 @@ elif pagina_seleccionada == '💿 Discografía':
         if st.button('Volver a la discografía', key='volver_detalle'):
             st.session_state['song_detalle'] = None
         st.markdown('---')
-        st.stop()
+        st.stop() 
 
+    #Luego, recorremos cada álbum para que podamos mostrar su portada, información general y la lista de canciones asociadas. Esto lo hacemos utilizando un bucle for que recorre la lista de álbumes y, para cada álbum, filtramos las canciones correspondientes en el DataFrame. 
+    #Si el álbum tiene canciones, mostramos la portada (si está disponible), el total de canciones, el año del álbum y el género. Además, añadimos un botón para que el usuario pueda ver las canciones del álbum y, si lo hace, mostramos la lista de canciones con sus detalles.
     for idx, album in enumerate(albumes):
         canciones_del_album = df_discografia[df_discografia['Álbum'] == album]
         if canciones_del_album.empty:
             continue
 
-        foto_album = None
+        foto_album = None #Aquí, inicializamos la variable 'foto_album' como None para que podamos almacenar la portada del álbum si está disponible. Luego, verificamos si la columna de portadas existe y si contiene valores no nulos para el álbum actual. Si encontramos una portada válida, la asignamos a 'foto_album'.
         if portada_col and portada_col in canciones_del_album.columns:
             valores_foto = canciones_del_album[portada_col].dropna().unique()
             if len(valores_foto) > 0:
                 foto_album = valores_foto[0]
 
         st.markdown(
-            f"<h2 style='color: #8D0000; border-bottom: 2px solid #FFD700; padding-top: 15px;'>💿 {album}</h2>",
-            unsafe_allow_html=True
+            f"<h2 style='color: #8D0000; border-bottom: 2px solid #FFD700; padding-top: 15px;'>💿 {album}</h2>", 
+            unsafe_allow_html=True #Luego, mostramos el título del álbum con un estilo visual más llamativo y una línea decorativa debajo del título para separar visualmente cada álbum en la lista.
         )
-        album_col1, album_col2 = st.columns([1, 2])
-        with album_col1:
+        album_col1, album_col2 = st.columns([1, 2]) #Ahora, creamos dos columnas para mostrar la portada del álbum y la información general de manera equilibrada. La primera columna tendrá un ancho relativo de 1 y la segunda columna tendrá un ancho relativo de 2.
+        with album_col1: #En la primera columna, mostramos la portada del álbum si está disponible. Si no hay una portada disponible, mostramos un mensaje indicando que no hay imagen de portada. Esto lo hacemos utilizando st.image para mostrar la imagen y st.markdown para mostrar el mensaje.
             if foto_album:
                 st.image(foto_album, caption=f"Portada de {album}", width=400)
             else:
@@ -512,7 +431,7 @@ elif pagina_seleccionada == '💿 Discografía':
                     st.session_state['album_abierto'] = None
                 else:
                     st.session_state['album_abierto'] = album
-        with album_col2:
+        with album_col2: #En la segunda columna, mostramos información general del álbum, incluyendo el total de canciones, el año del álbum y el género. Esto lo hacemos utilizando st.markdown para mostrar la información con un estilo visual más llamativo.
             st.markdown(
                 f"<p style='color: #000000; font-size: 16px;'><strong>Total de canciones:</strong> {len(canciones_del_album)}</p>",
                 unsafe_allow_html=True
@@ -524,12 +443,13 @@ elif pagina_seleccionada == '💿 Discografía':
             if genero_album:
                 st.markdown(f"<p style='color: #000000;'><strong>Género:</strong> {genero_album}</p>", unsafe_allow_html=True)
 
-        if st.session_state.get('album_abierto') == album:
+        #Por otro lado, comprobamos si el álbum está abierto para que podamos mostrar las canciones correspondientes debajo de su información general. 
+        if st.session_state.get('album_abierto') == album: #Así, si el usuario ha abierto un álbum específico, mostramos la lista de canciones asociadas a ese álbum. Para cada canción, mostramos su título, mensaje (si está disponible), portada del álbum (si está disponible) y un botón para ver los detalles de la canción. Esto lo hacemos utilizando un bucle for que recorre las canciones del álbum y st.markdown para mostrar la información con un estilo visual más llamativo.
             st.markdown(
                 f"<h3 style='color: #8D0000;'>🎵 Canciones en {album}</h3>",
                 unsafe_allow_html=True
             )
-            for song_idx, fila in canciones_del_album.iterrows():
+            for song_idx, fila in canciones_del_album.iterrows(): #Aquí, recorremos cada canción del álbum para mostrar su información detallada. Para cada canción, obtenemos el nombre de la canción, el enlace a la portada (si está disponible), el enlace a las letras (si está disponible) y cualquier mensaje adicional. Luego, construimos un bloque HTML que contiene esta información y lo mostramos utilizando st.markdown. Además, añadimos el botón para que el usuario pueda ver los detalles de la canción.
                 nombre_cancion = obtener_nombre_cancion(fila) or 'Título desconocido'
                 link_portada = buscar_valor(fila, ['Link_portada'])
                 link_letras = buscar_valor(fila, ['Link_letras', 'Link_letra', 'Link_Letras', 'Letra'])
@@ -541,7 +461,7 @@ elif pagina_seleccionada == '💿 Discografía':
                     f"<h4 style='color: #8D0000; margin: 0 0 8px 0;'>🎶 {nombre_cancion}</h4>"
                     f"<p style='color: #000000; margin: 0 0 8px 0; line-height: 1.5;'>" + (f"{mensaje}" if mensaje else "") + "</p>"
                     "</div>"
-                )
+                ) 
                 if foto_album:
                     card_html += (
                         "<div style='width: 180px; min-width: 180px;'>"
@@ -554,16 +474,14 @@ elif pagina_seleccionada == '💿 Discografía':
                 detalle_key = f"detalle_cancion_{idx}_{song_idx}"
                 if st.button('Ver detalles', key=detalle_key):
                     st.session_state['song_detalle'] = {'album': album, 'fila': fila.to_dict()}
-            st.markdown('---')
+            st.markdown('---') #Añadimos un separador visual para que la transición entre secciones se perciba mejor.
 
-    # Mostrar estadísticas generales
-    st.markdown("<h3 style='color: #8D0000;'>📊 Estadísticas Generales</h3>", unsafe_allow_html=True)
-    
-    # Crear columnas para mostrar datos
+    #Posteriormente, mostramos estas métricas para que el usuario pueda ver de forma rápida el resumen general de la discografía. Esto lo hacemos utilizando el comando st.markdown para mostrar el título de la sección de estadísticas generales.
+    #Luego, creamos tres columnas para distribuir la información de manera equilibrada y más legible. 
     stat_col1, stat_col2, stat_col3 = st.columns(3)
     
-    with stat_col1:
-        # Contar el total de álbumes
+    with stat_col1: 
+        #En esta columna, contamos los álbumes para que el usuario vea cuántos discos están disponibles en la sección con el comando len() y lo almacenamos en la variable 'total_albumes'. Luego, mostramos esta métrica utilizando st.metric para que el usuario pueda ver de forma rápida el total de álbumes disponibles.
         total_albumes = len(albumes)
         st.metric(
             label="Total de Álbumes",  # Etiqueta
@@ -571,7 +489,7 @@ elif pagina_seleccionada == '💿 Discografía':
         )
     
     with stat_col2:
-        # Contar el total de canciones
+        #Luego, contamos las canciones para que podamos mostrar el total de entradas disponibles en la discografía.
         total_canciones = len(df_discografia)
         st.metric(
             label="Total de Canciones",
@@ -579,7 +497,7 @@ elif pagina_seleccionada == '💿 Discografía':
         )
     
     with stat_col3:
-        # Contar los géneros únicos
+        #Finalmente, calculamos los géneros únicos para que el usuario pueda identificar la diversidad musical presente en los datos.
         if 'Género' in df_discografia.columns:
             total_generos = df_discografia['Género'].nunique()
             # .nunique() cuenta valores únicos
@@ -588,15 +506,15 @@ elif pagina_seleccionada == '💿 Discografía':
                 value=total_generos
             )
 
-    # Cerrar el contenedor de fondo específico para Discografía
+    #Por último, cerramos este contenedor para que el diseño de la sección quede correctamente estructurado.
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================================================================
-# PÁGINA 3: LORE
+# QUINTO: PÁGINA 3: LORE
 # ============================================================================
 
 elif pagina_seleccionada == '📖 Lore':
-    # Mostrar título
+    #En primer lugar, preparamos el encabezado principal de esta sección antes de construir el contenido. Por ello, utilizamos el comando st.markdown para mostrar el título de la sección con un estilo similar al resto de secciones.
     pass
     st.markdown(
         "<h1 style='text-align: center; color: #8D0000;'>GUÍA SOBRE PERSONAJES Y CIUDADES DE LA HISTORIA QUE NECESITAN SABER PARA ENTENDER</h1>",
@@ -606,13 +524,14 @@ elif pagina_seleccionada == '📖 Lore':
         "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Esto al principio puede ser un poco confuso y no es necesario aprendérselo ahora, pero cada vez que se pierdan con respecto a algún personaje, vuelvan a acá para aclarar quién es. Cabe aclarar que estas descripciones se van modificando y completando a medida que salen más detalles sobre los personajes.</p>",
         unsafe_allow_html=True
     )
+    #Posteriormente, creamos dos columnas para organizar la información de personajes y lugares en paralelo.
     col1, col2 = st.columns(2)
     
-    # ========== COLUMNA 1: INFORMACIÓN GENERAL ==========
+    #-COLUMNA 1: INFORMACIÓN GENERAL-
     with col1:
         st.markdown("<h2 style='color: #8D0000;'>PERSONAJES</h2>", unsafe_allow_html=True)
         
-        # Texto de presentación con imágenes a la derecha
+        #Aquí agregamos textos de presentación con imágenes a la derecha.
         personajes = [
             {
                 "nombre": "Blurryface",
@@ -662,7 +581,7 @@ elif pagina_seleccionada == '📖 Lore':
             
         ]
 
-        for personaje in personajes:
+        for personaje in personajes: #Aquí, recorremos la lista de personajes para mostrar su información y su imagen correspondiente. Para cada personaje, creamos dos columnas: una para el texto descriptivo y otra para la imagen. Esto lo hacemos utilizando un bucle for que recorre la lista de personajes y st.columns para crear las columnas. Luego, mostramos el nombre del personaje en negrita y color rojo, seguido de su descripción en
             texto_col, imagen_col = st.columns([3, 1])
             with texto_col:
                 st.markdown(
@@ -672,11 +591,11 @@ elif pagina_seleccionada == '📖 Lore':
             with imagen_col:
                 st.image(personaje['imagen'], width=90)
     
-    # ========== COLUMNA 2: DATOS INTERESANTES ==========
+    #-COLUMNA 2: DATOS INTERESANTES-
     with col2:
         st.markdown("<h2 style='color: #8D0000;'>LUGARES Y RELIGIÓN</h2>", unsafe_allow_html=True)
         
-        # Información adicional
+        #En esta sección, mostramos información sobre los lugares y la religión presentes en la historia. Para ello, creamos una lista de diccionarios que contienen el nombre del lugar, su descripción y un enlace a una imagen representativa. 
         lugares = [
             {
                 "nombre": "VIALISMO",
@@ -696,7 +615,7 @@ elif pagina_seleccionada == '📖 Lore':
             
         ]
 
-        for lugar in lugares:
+        for lugar in lugares: #Aquí, recorremos la lista de lugares para mostrar su información y su imagen correspondiente. Para cada lugar, creamos dos columnas: una para el texto descriptivo y otra para la imagen. Esto lo hacemos utilizando un bucle for que recorre la lista de lugares y st.columns para crear las columnas. Luego, mostramos el nombre del lugar en negrita y color rojo, seguido de su descripción en color negro.
             texto_col, imagen_col = st.columns([3, 1])
             with texto_col:
                 st.markdown(
@@ -708,11 +627,10 @@ elif pagina_seleccionada == '📖 Lore':
 
 
 #En esta sección, se contará ya la historia a través de un botón interactivo con el comando st.button
-
-        if 'mostrar_historia' not in st.session_state:
+        if 'mostrar_historia' not in st.session_state: 
             st.session_state.mostrar_historia = False
 
-        st.markdown(
+        st.markdown( #En primer lugar creamos el estilo para botón interactvo, para que sea blanco e independiente del modo de color de la página.
             """
             <style>
             div.stButton > button {
@@ -728,10 +646,10 @@ elif pagina_seleccionada == '📖 Lore':
             unsafe_allow_html=True
         )
 
-        if st.button('Conoce la Historia detrás de las canciones', key='btn_ir_historia'):
+        if st.button('Conoce la Historia detrás de las canciones', key='btn_ir_historia'): #Aquí, creamos un botón interactivo que permite al usuario mostrar u ocultar la historia detrás de las canciones. Al hacer clic en el botón, se alterna el valor de la variable de sesión 'mostrar_historia', lo que permite controlar si se muestra o no la historia en la interfaz.
             st.session_state.mostrar_historia = not st.session_state.mostrar_historia
 
-        if st.session_state.mostrar_historia:
+        if st.session_state.mostrar_historia: #Si la variable de sesión 'mostrar_historia' es verdadera, mostramos la historia detrás de las canciones. Para ello, utilizamos el comando st.markdown para mostrar un título y luego recorremos una lista de secciones que contienen el título, el texto y la imagen correspondiente a cada capítulo de la historia. Esto lo hacemos utilizando un bucle for que recorre la lista de secciones y st.markdown para mostrar la información con un estilo visual más llamativo.
             st.markdown('---')
             st.markdown("<h2 style='color: #8D0000;'>Historia</h2>", unsafe_allow_html=True)
 
@@ -763,7 +681,8 @@ elif pagina_seleccionada == '📖 Lore':
                 }
             ]
 
-            for idx, seccion in enumerate(historia_secciones):
+            for idx, seccion in enumerate(historia_secciones): #Aquí, recorremos la lista de secciones de la historia para mostrar su información y su imagen correspondiente. 
+                #Para cada sección, mostramos los subtítulos con un estilo diferente al texto y luego creamos dos columnas: una para el texto descriptivo y otra para la imagen. Esto lo hacemos utilizando un bucle for que recorre la lista de secciones y st.columns para crear las columnas. Luego, mostramos el texto de la historia en color
                 st.markdown(
                     f"<h5 p style='color: #8D0000; font-weight: bold;'>{seccion['titulo']}</h5>",
                     unsafe_allow_html=True
@@ -780,7 +699,7 @@ elif pagina_seleccionada == '📖 Lore':
                         st.image(foto_historia, width=600)
 
 # ============================================================================
-# PÁGINA 4: MAPA DE VIDEOCLIPS (Ubicaciones de grabación)
+# SEXTO: PÁGINA 4: MAPA DE VIDEOCLIPS (Ubicaciones de grabación)
 # ============================================================================
 
 elif pagina_seleccionada == '🗺️ Mapa':
@@ -795,6 +714,7 @@ elif pagina_seleccionada == '🗺️ Mapa':
     )
     st.markdown("---")
 
+    #En primer lugar, utilizamos esta función para normalizar nombres de columnas, eliminando acentos, eñes y espacios, de modo que podamos comparar columnas sin errores.
     def normalize_col(col_name):
         if col_name is None:
             return ''
@@ -803,6 +723,7 @@ elif pagina_seleccionada == '🗺️ Mapa':
             text = text.replace(a, b)
         return ''.join(ch for ch in text if ch.isalnum())
 
+    #Luego, utilizamos esta función para buscar la columna correcta en la base de datos a partir de una lista de posibles nombres, usando la normalización anterior.
     def obtener_columna(df, candidatos):
         normalized_columns = {normalize_col(c): c for c in df.columns}
         for c in candidatos:
@@ -811,10 +732,13 @@ elif pagina_seleccionada == '🗺️ Mapa':
                 return normalized_columns[key]
         return None
 
+    #Posteriormente, y de manera opcional, analizamos si la librería folium está disponible antes de continuar con el mapa. 
+    #Esto lo puse principalmente para que, si alguien algún día utiliza de ejemplo mi código y no tiene folium instalado, no se rompa la página y pueda ver el resto de funcionalidades.
     if folium is None:
         st.error('La librería folium no está instalada. Por favor instala folium en tu entorno con: pip install folium')
         st.stop()
 
+    #Luego, identificamos las columnas de lugar, latitud y longitud en la base de datos, utilizando la función anterior para buscar entre varias opciones posibles. Esto nos permite adaptarnos a diferentes formatos de bases de datos que puedan tener nombres de columnas distintos (nuevamente, esto es útil si alguien más utiliza mi código con su propia base de datos).
     lugar_col = obtener_columna(df_discografia, [
         'Lugar de grabación', 'Lugar de grabacion', 'Lugar Grabación', 'Lugar Grabacion',
         'Lugar', 'Location', 'ubicación', 'ubicacion', 'locacion'
@@ -833,9 +757,11 @@ elif pagina_seleccionada == '🗺️ Mapa':
         'Link_mv', 'Link MV', 'Link_MV', 'Linkmv', 'Link video', 'Link Vídeo', 'LinkVideo', 'Video Link'
     ])
 
+    #En caso no se encuentran los datos mínimos, se mostrará una advertencia y no se creará el mapa. Esto también es opcional, pero lo puse para que algún usuario x sepa que no hay datos de ubicación y no se quede con la duda de por qué no aparece el mapa.
     if not lugar_col or not lat_col or not lon_col:
         st.warning('No se encuentran columnas válidas de ubicación o coordenadas en la base de datos.')
-    else:
+    else: #Si se encuentran las columnas necesarias, procedemos a filtrar los datos para quedarnos solo con las filas que tienen coordenadas válidas y no nulas. 
+        #Esto es importante para evitar errores al crear el mapa y asegurar que solo se muestren ubicaciones correctas.
         df_map = df_discografia[
             df_discografia[lugar_col].notna() &
             df_discografia[lat_col].notna() &
@@ -845,22 +771,25 @@ elif pagina_seleccionada == '🗺️ Mapa':
         df_map[lon_col] = pd.to_numeric(df_map[lon_col], errors='coerce')
         df_map = df_map.dropna(subset=[lat_col, lon_col])
 
+        #Si ya no queda ninguna fila con coordenadas válidas, lo indico al usuario.
         if df_map.empty:
             st.info('No hay canciones con videoclip y ubicación válida en la base de datos.')
         else:
+            #En este punto, defino cómo obtener el nombre de la canción desde varias columnas posibles (por razones ya explicadas anteriormente). Esto es útil para que el mapa muestre correctamente los nombres de las canciones en los popups.
             def obtener_nombre_cancion(fila):
                 candidatos = [
                     'TÍTULO', 'Título', 'TITULO', 'Canción', 'Cancion', 'Nombre', 'Nombre de canción', 'Nombre de cancion',
                     'Titulo', 'Title', 'title', 'track', 'Track', 'track_name', 'Track Name', 'Song', 'song'
                 ]
-                for c in candidatos:
+                for c in candidatos: #Aquí, recorremos la lista de posibles nombres de columna para obtener el nombre de la canción desde la fila actual de la base de datos. 
+                    #Si encontramos un valor válido (no nulo y no vacío), lo devolvemos como el nombre de la canción. Si no se encuentra ningún valor válido, devolvemos 'Título desconocido'.
                     if c in fila.index:
                         val = fila.get(c)
                         if pd.notna(val) and str(val).strip() != '':
                             return str(val).strip()
                 return 'Título desconocido'
 
-            df_map['song_name'] = df_map.apply(obtener_nombre_cancion, axis=1)
+            df_map['song_name'] = df_map.apply(obtener_nombre_cancion, axis=1) #Aquí, aplicamos la función anterior a cada fila de la base de datos filtrada para crear una nueva columna 'song_name' que contendrá el nombre de la canción correspondiente a cada ubicación. Esto nos permitirá mostrar los nombres de las canciones en los popups del mapa.
             df_map['location'] = df_map[lugar_col].astype(str)
             df_map['latitude'] = df_map[lat_col]
             df_map['longitude'] = df_map[lon_col]
@@ -878,6 +807,7 @@ elif pagina_seleccionada == '🗺️ Mapa':
                     if pd.notna(foto) and str(foto).strip() != '':
                         ubicaciones[key]['photo'] = str(foto).strip()
 
+            #Luego, creamos los marcadores en el mapa con sus respectivos popups y enlaces (si existen). Aquí, recorremos el diccionario de ubicaciones y para cada ubicación, construimos el contenido del popup que mostrará el nombre del lugar, la foto (si existe) y la lista de canciones grabadas en ese lugar.
             for (lat, lon, location), info in ubicaciones.items():
                 popup_lines = [f"<strong>{location}</strong><br/>"]
                 if info['photo']:
@@ -894,6 +824,7 @@ elif pagina_seleccionada == '🗺️ Mapa':
                     icon=folium.Icon(color='red', icon='music', prefix='fa')
                 ).add_to(mapa)
 
+            #Posteriormente, renderizamos el mapa para que tenga bordes redondeados y sombra, y lo mostramos.
             st.markdown("<div style='border-radius: 14px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);'>", unsafe_allow_html=True)
             map_html = mapa.get_root().render()
             components.html(map_html, height=650, scrolling=True)
@@ -912,32 +843,37 @@ elif pagina_seleccionada == '🗺️ Mapa':
                     lon_col: 'Longitud'
                 }),
                 use_container_width=True
-            )
+            ) #Finalmente, mostramos la tabla con los videoclips incluidos en el mapa, renombrando las columnas para que sean más legibles. Esto permite al usuario ver de manera clara y organizada la información de cada videoclip, incluyendo el nombre de la canción, el lugar de grabación, el enlace al videoclip (si existe) y las coordenadas geográficas.
 
 # ============================================================================
-# PÁGINA 5: JUEGO INTERACTIVO
+# SÉPTIMO: PÁGINA 5: JUEGO INTERACTIVO
 # ============================================================================
 
 elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
-    # Mostrar título
     st.markdown(
         "<h1 style='text-align: center; color: #8D0000;'>ADIVINA LA CANCIÓN</h1>",
-        unsafe_allow_html=True
-    )
+        unsafe_allow_html=True 
+    ) #En primer lugar, mostramos el nombre del juego como título centrado y en color rojo. Esto sirve para que el usuario sepa de qué trata la página y se sienta motivado a participar en el juego.
     
+    #Luego, presentamos una breve descripción para invitar al usuario a jugar.
     st.markdown(
         "<p style='text-align: center; color: #000000; font-weight: bold; font-size: 1.1em;'>Demuestra aquí y ahora si eres realmente un verdadero fan de TOP, o si aún te falta aprender más de la banda ✨.</p>",
         unsafe_allow_html=True
     )
 
+    #Posteriormente, definimos la función para cargar las canciones desde un archivo Excel. Esta función utiliza la librería pandas para leer el archivo y extraer los títulos de las canciones, limpiándolos de caracteres no alfabéticos y normalizándolos a minúsculas. 
+    #Además, maneja posibles errores como la ausencia del archivo o de la columna esperada.
     @st.cache_data
     def load_songs(archivo_excel="mi_base_de_datos.xlsx"):
+        #En esta función se carga el archivo Excel (la base de datos) y se extraen los títulos de las canciones.
+        #Luego, se limpiamos los títulos eliminando caracteres no alfabéticos y normalizando a minúsculas. 
+        #Finalmente, se filtran los títulos vacíos que puedan haber quedado tras la limpieza.
         try:
             df = pd.read_excel(archivo_excel)
             if "TÍTULO" in df.columns:
-               # Limpiar títulos: remover caracteres no alfabéticos y convertir a minúsculas
+               # Luego, limpio los títulos eliminando caracteres no alfabéticos y normalizo a minúsculas.
                titles = df["TÍTULO"].astype(str).apply(lambda x: re.sub(r'[^a-zA-ZñÑáéíóúÁÉÍÓÚ ]', '', x).lower().strip())
-               # Filtrar títulos vacíos después de la limpieza
+               # Después, filtro los títulos vacíos que puedan haber quedado tras la limpieza.
                titles = [title for title in titles if title]
                return titles
             else:
@@ -950,8 +886,11 @@ elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
             st.error(f"Ocurrió un error al cargar el archivo Excel: {e}")
             return []
 
-# --- Inicializar el estado del juego ---
+    #-Inicializar el estado del juego-
+    #Aquí definimos la función para inicializar el estado del juego, seleccionando una canción secreta al azar de la lista de canciones cargadas y estableciendo los contadores de intentos y letras adivinadas. 
+    #También se inicializan las variables que indican si el juego ha terminado o si el jugador ha ganado.
     def initialize_game():
+        # Aquí defino el estado inicial de la partida y selecciono una canción secreta.
         songs = st.session_state.all_songs
         if not songs:
             st.error("No hay canciones disponibles para jugar. Por favor, verifica el archivo Excel.")
@@ -965,33 +904,38 @@ elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
         st.session_state.game_won = False
         st.session_state.message = ""
 
-# --- Función para mostrar la palabra secreta ---
+    #-Función para mostrar la palabra secreta-
+    #En primer lugar, definimos la función para mostrar la palabra secreta con guiones bajos para las letras no adivinadas y espacios para las letras adivinadas. 
+    #Esto permite al jugador ver su progreso en el juego y saber cuántas letras le faltan por adivinar.
     def display_word(word, guessed_letters):
+        #En esta función construimos la representación visible de la palabra con guiones y espacios.
         displayed = ""
         for char in word:
             if char == ' ':
-                displayed += '  ' # Doble espacio para indicar un espacio en la palabra
+                displayed += '  ' #Doble espacio para indicar un espacio en la palabra
             elif char in guessed_letters:
                 displayed += char + ' '
             else:
                 displayed += '_ '
         return displayed.strip()
 
-# --- Cargar las canciones solo una vez ---
+    #-Cargar las canciones solo una vez-
+    #Ahora, cargamos las canciones desde el archivo Excel solo una vez y las almacenamos en el estado de sesión de Streamlit. Esto evita que se recarguen cada vez que el usuario interactúa con la página. Esto realmente es para mejorar la eficiencia del juego.
     if 'all_songs' not in st.session_state:
         st.session_state.all_songs = load_songs('mi_base_de_datos.xlsx') # ¡Asegúrate de que esta ruta sea correcta!
         if not st.session_state.all_songs:
             st.stop() # Detener la ejecución si no hay canciones
 
-# --- Inicializar juego si no está inicializado o si se reinicia ---
+    #-Inicializar juego si no está inicializado o si se reinicia-
+    #Posteriormente, verificamos si el juego ya ha sido inicializado o si se ha terminado. Si no se ha inicializado o si el juego ha terminado, llamamos a la función de inicialización para reiniciar el juego y seleccionar una nueva canción secreta.
     if 'secret_word' not in st.session_state or st.session_state.game_over:
         initialize_game()
 
-# --- Mostrar el estado actual del juego ---
+    #-Mostrar el estado actual del juego-
+    #Finalmente, creamos tres columnas para centrar el contenido del juego y mostrar la palabra secreta, los intentos restantes y las letras adivinadas.
     col_izq, col_centro, col_der = st.columns([1, 4, 1])
-    with col_centro:
-        if not st.session_state.game_over:
-            # Mostrar la palabra en un recuadro blanco con texto negro
+    with col_centro: #Luego, dentro de la columna central, verificamos si el juego no ha terminado. Si el juego sigue activo, mostramos la palabra secreta con guiones bajos para las letras no adivinadas, los intentos restantes y las letras que ya han sido adivinadas por el jugador.
+        if not st.session_state.game_over: #Si el juego no ha terminado, mostramos la palabra secreta con guiones bajos para las letras no adivinadas y espacios para las letras adivinadas. También mostramos los intentos restantes y las letras que ya han sido adivinadas por el jugador.
             word_display = display_word(st.session_state.secret_word, st.session_state.guessed_letters)
             st.markdown(f"<div style='background:#ffffff;color:#000000;padding:12px;border-radius:10px;display:inline-block;'>" \
                         f"<strong>Palabra:</strong> <code style='background:transparent;color:#000000;border:none;'>{word_display}</code></div>",
@@ -999,7 +943,9 @@ elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
             st.write(f"Intentos restantes: {st.session_state.max_incorrect_guesses - st.session_state.incorrect_guesses}")
             st.write(f"Letras adivinadas: {', '.join(sorted(list(st.session_state.guessed_letters))).upper()}")
 
-    # --- Entrada de la letra ---
+        #-Entrada de la letra-
+        #A continuación, creamos un formulario para que el jugador pueda ingresar su adivinanza, ya sea una letra o la palabra completa. 
+        #Pero primero asignamos un estilo al formulario y los botones para que tengan un fondo blanco y letra negra.
         st.markdown(
             """
             <style>
@@ -1020,62 +966,58 @@ elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
             """,
             unsafe_allow_html=True,
         )
-
+        
+        #Posteriormente, creamos un formulario para que el jugador pueda ingresar su adivinanza, ya sea una letra o la palabra completa.
         with st.form(key="form_adivinanza", clear_on_submit=True):
            guess = st.text_input("Adivina una letra o la palabra completa:", max_chars=20).lower().strip()
            submit_button = st.form_submit_button(label="Enviar")
-
+        
+        #Luego, verificamos si el jugador ha ingresado una letra o palabra completa y ha presionado el botón de envío. Si es así, validamos la entrada para asegurarnos de que sea una letra o una palabra completa válida.
         if guess and submit_button:
-            if len(guess) == 1 and guess.isalpha(): # Adivinanza de una sola letra
+            if len(guess) == 1 and guess.isalpha(): #Adivinanza de una sola letra.
+                #Si la letra ya fue adivinada, aviso al usuario.
                 if guess in st.session_state.guessed_letters:
                     st.warning("Ya adivinaste esa letra. ¡Intenta con otra!")
                 elif guess in st.session_state.secret_word:
+                    #Si la letra está en la palabra, la agregamos a las letras adivinadas.
                     st.session_state.guessed_letters.add(guess)
-                # Verificar si ganó después de cada letra correcta
+                    #Verificamos si ganó después de cada letra correcta.
                     current_display = display_word(st.session_state.secret_word, st.session_state.guessed_letters).replace(' ', '')
                     cleaned_secret_word = st.session_state.secret_word.replace(' ', '')
                     if current_display == cleaned_secret_word:
                         st.session_state.game_won = True
                         st.session_state.game_over = True
                         st.session_state.message = "¡Qué increíble es tener a alguien realmente fan de esta increíble banda. ¡Ganaste!"
-                         # <--- Añade esto para refrescar la pantalla inmediatamente con el mensaje
                 else:
+                    #Si la letra no está en la palabra, se incrementa el contador de errores.
                     st.session_state.incorrect_guesses += 1
-                    st.session_state.guessed_letters.add(guess) # También añadir letras incorrectas a las adivinadas
+                    st.session_state.guessed_letters.add(guess) #También añadimos letras incorrectas a las adivinadas.
                     st.error("¡Incorrecto!")
-            elif len(guess) > 1 and guess.isalpha(): # Adivinanza de la palabra completa
-                if guess == st.session_state.secret_word:
+            elif len(guess) > 1 and guess.isalpha(): #Adivinanza de la palabra completa.
+                #Si el usuario intenta adivinar la palabra completa, comparamos directamente.
+                if guess == st.session_state.secret_word: #Así, si la palabra completa es correcta, el jugador gana inmediatamente.
                     st.session_state.game_won = True
                     st.session_state.game_over = True
                     st.session_state.message = "¡Qué increíble es tener a alguien realmente fan de esta increíble banda. ¡Ganaste!"
-                     # <--- Añade esto también
-                else:
-                    st.session_state.incorrect_guesses = st.session_state.max_incorrect_guesses # Pierde todos los intentos si falla la palabra
+                else: #Si la palabra completa es incorrecta, el jugador pierde todos los intentos restantes y el juego termina.
+                    st.session_state.incorrect_guesses = st.session_state.max_incorrect_guesses
                     st.session_state.game_over = True
                     st.session_state.message = "Oooh, inténtalo de nuevo, quizás aún deberías conocer más de la banda. ¡Te quedaste sin intentos!"
-                     # <--- Y aquí para forzar la actualización
-            else:
+            else: #Si la entrada no es válida (ni una letra ni una palabra completa), mostramos un mensaje de advertencia al usuario.
                 st.warning("Por favor, ingresa solo una letra o la palabra completa (solo caracteres alfabéticos).")
-        
-        # Limpiar el input después de enviar
-            
 
-    # --- Verificar si se agotaron los intentos ---
+        #-Verificar si se agotaron los intentos-
         if st.session_state.incorrect_guesses >= st.session_state.max_incorrect_guesses and not st.session_state.game_won:
+            #Si no quedan intentos, el juego debe marcarseo como terminado.
             st.session_state.game_over = True
-            if not st.session_state.message: # Solo si no hay un mensaje previo de adivinar palabra completa
+            if not st.session_state.message: #Solo si no hay un mensaje previo de adivinar palabra completa
                 st.session_state.message = "Te quedaste sin intentos. Oooh, inténtalo de nuevo, quizás aún deberías conocer más de la banda."
-             # <--- Asegúrate de que este rerun esté presente para que se renderice el bloque inferior de fin de juego
 
-# --- Mensaje de fin de juego y botón para reiniciar ---
+    #-Mensaje de fin de juego y botón para reiniciar-
+    #Si el juego ha terminado, mostramos la palabra secreta y un mensaje final dependiendo de si el jugador ganó o perdió. También estilizamos el botón de reinicio para que mantenga la estética del juego y permitimos al jugador reiniciar el juego haciendo clic en él.
     if st.session_state.game_over:
         st.markdown(f"### La palabra secreta era: **{st.session_state.secret_word.upper()}**")
-    
-    # Mostramos el mensaje (Ganaste, Perdiste, o Sin intentos) de forma estática
         st.info(st.session_state.message)
-    
-    # El juego solo se reiniciará cuando el usuario haga clic en este botón explícitamente
-        # Estilar el botón de reinicio para fondo blanco y texto negro
         st.markdown(
             """
             <style>
@@ -1091,68 +1033,67 @@ elif pagina_seleccionada == '❓ ¿Qué tanto conoces a TOP? |-/':
 
         if st.button("¡Jugar de nuevo!"):
             initialize_game()
-            st.rerun() # Este rerun dentro del botón sí es correcto porque el usuario acaba de pedir reiniciar
-
+            st.rerun() #Reinicia la página para comenzar un nuevo juego.
 
 # ============================================================================
-# PÁGINA 5: ESTADÍSTICAS (Gráficos y análisis)
+# OCTAVO: PÁGINA 6: ESTADÍSTICAS (Gráficos y análisis)
 # ============================================================================
 
 elif pagina_seleccionada == '📊 Estadísticas':
-    # Mostrar título
+    #En primer lugar, utilizamos st.markdown para mostrar el título de la última sección centrado y con estilo.
     st.markdown(
         "<h1 style='text-align: center; color: #8D0000;'>📊 ESTADÍSTICAS Y ANÁLISIS</h1>",
         unsafe_allow_html=True
     )
     
+    #Luego, creamos una separación visual entre el título y el contenido.
     st.markdown("---")
     
-    # ========== GRÁFICO 1: CANCIONES POR ÁLBUM ==========
+    #-GRÁFICO 1: CANCIONES POR ÁLBUM-
+    #Posteriormente, presentamos el subtítulo para el primer gráfico.
     st.markdown("<h2 style='color: #8D0000;'>🎵 Canciones por Álbum</h2>", unsafe_allow_html=True)
     
-    # Contar cuántas canciones hay en cada álbum
+    #A continuación, contamos cuántas canciones hay en cada álbum utilizando la función .value_counts() de pandas, que nos devuelve un Series con los conteos de cada valor único en la columna 'Álbum'.
     canciones_por_album = df_discografia['Álbum'].value_counts()
-    # .value_counts() cuenta cuántas veces aparece cada valor
     
-    # Crear un gráfico de barras
+    #Después, generamos un gráfico de barras a partir de esos conteos con st.bar_chart(), que crea automáticamente el gráfico.
     st.bar_chart(canciones_por_album)
-    # st.bar_chart(): crea un gráfico de barras automáticamente
-    
+
     st.markdown("---")
     
-    # ========== GRÁFICO 2: DISTRIBUCIÓN POR GÉNERO ==========
-    if 'Género' in df_discografia.columns:
+    #-GRÁFICO 2: DISTRIBUCIÓN POR GÉNERO-
+    #Ahora comprobamos si la columna 'Género' existe en la base de datos para evitar errores. Nuevamente y como en casos anteriores, esto es útil si alguien más utiliza mi código con su propia base de datos que podría no tener esa columna.
+    if 'Género' in df_discografia.columns: 
+        #Si existe, mostramos el subtítulo para la distribución por género.
         st.markdown("<h2 style='color: #8D0000;'>🎸 Distribución por Género</h2>", unsafe_allow_html=True)
         
-        # Contar las canciones por género
+        #Luego calculamos la cantidad de canciones por cada género.
         canciones_por_genero = df_discografia['Género'].value_counts()
         
-        # Crear un gráfico de pastel
+        #Ygeneramos el gráfico de barras para visualizar esa distribución.
         st.bar_chart(canciones_por_genero)
         
         st.markdown("---")
     
-    # ========== TABLA DE DATOS COMPLETA ==========
+    #-TABLA DE DATOS COMPLETA-
+    #Finalmente, presento el título de la tabla con todos los datos utilizados en los gráficos, para que el usuario pueda ver la información completa de manera tabular.
     st.markdown("<h2 style='color: #8D0000;'>📋 Tabla Completa de Datos</h2>", unsafe_allow_html=True)
     
-    # Mostrar la tabla con todos los datos
+    #Como último paso, mostramos la base de datos completa y permitimos que use todo el ancho disponible.
     st.dataframe(
         df_discografia,
         use_container_width=True
     )
     
-
+    
 # ============================================================================
-# FOOTER (Pie de página)
+# NOVENO (OPCIONAL):FOOTER (Pie de página, más que nada por estética.
 # ============================================================================
 
+#Después de todo el contenido, separamos la sección con una línea horizontal.
 st.markdown("---")
-st.markdown(
-    "<footer style='text-align: center; color: #888888; font-size: 12px;'>"
-    "<p>🎵 Página desarrollada con Streamlit | © 2024 Twenty One Pilots Database 🎵</p>"
-    "</footer>",
-    unsafe_allow_html=True
-)
+#Insertamos el pie de página con un st.markdown que contiene HTML para centrar el texto, cambiar el color y tamaño de fuente, y mostrar un mensaje de derechos reservados (a modo de broma claro).
+st.markdown("<footer style='text-align: center; color: #888888; font-size: 14px;'>© 2026 Mi Web de TOP 😝. Todos los derechos reservados.</footer>", unsafe_allow_html=True)
 
 # ============================================================================
 # FIN DEL CÓDIGO
